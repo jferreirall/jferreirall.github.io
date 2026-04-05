@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incognia Dashboard Spec — Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAFAF8;
+            --surface: #FFFFFF;
+            --surface-hover: #F5F5F0;
+            --border: #E8E6E1;
+            --border-light: #F0EDE8;
+            --text-primary: #1A1A1A;
+            --text-secondary: #6B6B6B;
+            --text-tertiary: #9B9B9B;
+            --accent: #2D5A3D;
+            --accent-light: #E8F0EB;
+            --accent-tag: #2D5A3D;
+            --tag-bg: #F0F0EC;
+            --tag-text: #4A4A4A;
+            --serif: 'Instrument Serif', Georgia, serif;
+            --sans: 'Satoshi', system-ui, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(250, 250, 248, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .nav-name {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--text-primary); }
+
+        /* HERO */
+        .case-hero {
+            padding: 140px 40px 48px;
+            max-width: 900px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 32px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: var(--accent); }
+
+        .case-hero h1 {
+            font-family: var(--serif);
+            font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+            line-height: 1.15;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .case-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 24px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-label {
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+        }
+
+        .case-description {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            line-height: 1.75;
+        }
+
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 100px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: 0.02em;
+        }
+
+        .tag.accent {
+            background: var(--accent-light);
+            color: var(--accent-tag);
+        }
+
+        /* TABS */
+        .tabs-container {
+            position: sticky;
+            top: 65px;
+            z-index: 90;
+            background: rgba(250, 250, 248, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar { display: none; }
+
+        .tab {
+            padding: 14px 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+            user-select: none;
+        }
+
+        .tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-number {
+            font-size: 0.68rem;
+            color: var(--text-tertiary);
+            margin-right: 6px;
+            opacity: 0.6;
+        }
+
+        .tab.active .tab-number {
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* TAB CONTENT */
+        .tab-content {
+            display: none;
+            padding: 48px 40px 80px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .layer-body {
+            max-width: 760px;
+        }
+
+        .layer-body p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 16px;
+        }
+
+        .layer-body h3 {
+            font-family: var(--sans);
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 32px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .layer-intro {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .layer-number {
+            font-family: var(--serif);
+            font-size: 3rem;
+            color: var(--border);
+            line-height: 1;
+        }
+
+        .layer-title {
+            font-family: var(--serif);
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        /* TABLES */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 20px 0 28px;
+        }
+
+        .spec-table th {
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .spec-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        .spec-table td:first-child {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .spec-table tr:last-child td { border-bottom: none; }
+
+        /* STAT GRID */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+            margin: 24px 0 32px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-family: var(--serif);
+            font-size: 1.8rem;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* QUADRANT GRID */
+        .quadrant-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0 28px;
+        }
+
+        .quadrant-card {
+            padding: 16px 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .quadrant-card.hot { border-color: #F59E0B; background: #FEF3C7; }
+        .quadrant-card.well { border-color: #10B981; background: #D1FAE5; }
+        .quadrant-card.air { border-color: #3B82F6; background: #DBEAFE; }
+        .quadrant-card.dark { border-color: #6B7280; background: #F3F4F6; }
+
+        .quadrant-name { font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; }
+        .quadrant-desc { font-size: 0.78rem; color: var(--text-secondary); }
+
+        /* COMPONENT LIST */
+        .component-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .component-item {
+            padding: 14px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.82rem;
+        }
+
+        .component-id { font-weight: 700; color: var(--accent); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .component-name { font-weight: 500; color: var(--text-primary); margin-top: 2px; }
+        .component-type { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px; }
+
+        /* SWATCHES */
+        .swatch-row {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .swatch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .swatch-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .swatch-label { font-size: 0.78rem; color: var(--text-secondary); }
+        .swatch-hex { font-size: 0.72rem; color: var(--text-tertiary); font-family: monospace; }
+
+        /* EMBEDDED PREVIEWS */
+        .preview-container {
+            margin: 28px 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--surface);
+            max-width: 100%;
+        }
+
+        .preview-header {
+            padding: 10px 20px;
+            background: var(--surface-hover);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title { font-size: 0.78rem; font-weight: 500; color: var(--text-secondary); }
+
+        .preview-badge {
+            font-size: 0.66rem;
+            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 100px;
+            background: var(--accent-light);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .preview-frame {
+            width: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 40px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer a:hover { color: var(--accent); }
+        .footer-links { display: flex; gap: 24px; }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+        .animate-d1 { animation-delay: 0.1s; }
+        .animate-d2 { animation-delay: 0.2s; }
+        .animate-d3 { animation-delay: 0.3s; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .case-hero { padding: 120px 20px 40px; }
+            .tabs-container { padding: 0 20px; }
+            .tab { padding: 12px 14px; font-size: 0.75rem; }
+            .tab-content { padding: 32px 20px 60px; }
+            .quadrant-grid { grid-template-columns: 1fr; }
+            .component-list { grid-template-columns: 1fr; }
+            footer { padding: 30px 20px; flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-name">Jonas Ferreira</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Portfolio</a></li>
+            <li><a href="https://github.com/jferreirall" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="case-hero">
+        <a href="index.html" class="back-link animate animate-d1">&larr; Back to portfolio</a>
+        <h1 class="animate animate-d2">Account Prioritization &<br>Coverage Dashboard</h1>
+        <div class="case-meta animate animate-d3">
+            <div class="meta-item"><span class="meta-label">Client</span> Incognia</div>
+            <div class="meta-item"><span class="meta-label">Platform</span> Looker Studio (BigQuery)</div>
+            <div class="meta-item"><span class="meta-label">Framework</span> 6-Layer Dashboard Spec</div>
+            <div class="meta-item"><span class="meta-label">Date</span> April 2026</div>
+        </div>
+        <p class="case-description animate animate-d3">
+            Full end-to-end dashboard specification for Incognia's account prioritization system. Designed to surface which of 450+ target accounts are heating up, going dark, or being worked by only one motion &mdash; replacing gut-feel account selection with a data-driven weekly workflow.
+        </p>
+        <div class="case-tags animate animate-d3">
+            <span class="tag accent">Looker Studio</span>
+            <span class="tag accent">BigQuery</span>
+            <span class="tag">Dashboard Spec</span>
+            <span class="tag">Scoring Model</span>
+            <span class="tag">ABM</span>
+            <span class="tag">Data Architecture</span>
+        </div>
+    </section>
+
+    <!-- TABS -->
+    <div class="tabs-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="1"><span class="tab-number">01</span>Context &amp; Goals</div>
+            <div class="tab" data-tab="2"><span class="tab-number">02</span>Data Architecture</div>
+            <div class="tab" data-tab="3"><span class="tab-number">03</span>Wireframe</div>
+            <div class="tab" data-tab="4"><span class="tab-number">04</span>Mockup</div>
+            <div class="tab" data-tab="5"><span class="tab-number">05</span>Requirements</div>
+            <div class="tab" data-tab="6"><span class="tab-number">06</span>Visual Spec</div>
+            <div class="tab" data-tab="7"><span class="tab-number">07</span>Brand</div>
+        </div>
+    </div>
+
+    <!-- TAB 1: CONTEXT & GOALS -->
+    <div class="tab-content active" id="tab-1">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">01</span>
+                <h2 class="layer-title">Context & Goals</h2>
+            </div>
+
+            <p>The existing Looker Studio dashboard was functionally broken: built against raw engagement counts instead of scores, polluted by null company records, and choking on 3M+ rows of LinkedIn impression data. The goal was a complete rebuild with proper data architecture and a spec-driven approach.</p>
+
+            <h3>Audience</h3>
+            <table class="spec-table">
+                <thead><tr><th>Role</th><th>Frequency</th><th>Decision</th></tr></thead>
+                <tbody>
+                    <tr><td>Sales AE</td><td>Daily / Weekly</td><td>Which 3 to 5 accounts should I prioritize this week?</td></tr>
+                    <tr><td>Marketing Lead</td><td>Weekly</td><td>Where is marketing generating traction that sales isn't picking up?</td></tr>
+                    <tr><td>Sales &amp; Mkt Leadership</td><td>Weekly / Monthly</td><td>Are we closing the coverage gap across the target account universe?</td></tr>
+                    <tr><td>RevOps (Lean Layer)</td><td>Ad-hoc</td><td>Is the scoring model producing meaningful separation?</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Scoring Model</h3>
+            <p>Combined account score ranging from -200 to +200, composed of a Marketing Score (-100 to 100) and a Sales Score (-100 to 100). The critical threshold is 50 points on either axis.</p>
+
+            <h3>Quadrant Model</h3>
+            <div class="quadrant-grid">
+                <div class="quadrant-card well"><div class="quadrant-name">Well Covered</div><div class="quadrant-desc">Both motions &ge; 50. Monitor and maintain.</div></div>
+                <div class="quadrant-card hot"><div class="quadrant-name">Hot Handoff</div><div class="quadrant-desc">Marketing &ge; 50, Sales &lt; 50. Sales needs to act.</div></div>
+                <div class="quadrant-card air"><div class="quadrant-name">Needs Air Cover</div><div class="quadrant-desc">Sales &ge; 50, Marketing &lt; 50. Increase targeting.</div></div>
+                <div class="quadrant-card dark"><div class="quadrant-name">Dark</div><div class="quadrant-desc">Both &lt; 50. No meaningful engagement.</div></div>
+            </div>
+
+            <h3>Success Criteria</h3>
+            <p>An AE can identify their top accounts in under 2 minutes. Marketing can quantify quadrant movement over any period. Any account can be drilled down to contact roster and engagement timeline within one click. Dashboard loads in under 10 seconds.</p>
+        </div>
+    </div>
+
+    <!-- TAB 2: DATA ARCHITECTURE -->
+    <div class="tab-content" id="tab-2">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">02</span>
+                <h2 class="layer-title">Data Architecture</h2>
+            </div>
+
+            <p>Six BigQuery tables feed the dashboard. Each page uses its own data source to avoid Looker Studio blending entirely &mdash; all joins happen in BigQuery.</p>
+
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-value">6</div><div class="stat-label">Data Sources</div></div>
+                <div class="stat-card"><div class="stat-value">~11.5K</div><div class="stat-label">Companies</div></div>
+                <div class="stat-card"><div class="stat-value">~500K</div><div class="stat-label">Daily Eng. Rows</div></div>
+                <div class="stat-card"><div class="stat-value">10</div><div class="stat-label">Quality Issues</div></div>
+            </div>
+
+            <h3>Source Tables</h3>
+            <table class="spec-table">
+                <thead><tr><th>Table</th><th>Grain</th><th>Rows</th><th>Role</th></tr></thead>
+                <tbody>
+                    <tr><td>companies_raw_enriched</td><td>1 per company</td><td>~11,500</td><td>Company master: scores, tier, ICP, lifecycle</td></tr>
+                    <tr><td>contacts_raw_enriched</td><td>1 per contact</td><td>~15,000</td><td>Contact master: title, seniority, buying role</td></tr>
+                    <tr><td>engagements_fact</td><td>1 per event</td><td>~200K+</td><td>Raw engagement records</td></tr>
+                    <tr><td>engagements_fact_v2</td><td>1 per co./day</td><td>~500K</td><td>Pre-aggregated daily signals</td></tr>
+                    <tr><td>engagements_by_contact_v1</td><td>1 per contact &times; event</td><td>~300K+</td><td>Contact-level engagement detail</td></tr>
+                    <tr><td>ideal_persona_rules</td><td>Config</td><td>~50</td><td>Persona matching rules</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Page-to-Source Mapping</h3>
+            <table class="spec-table">
+                <thead><tr><th>Page</th><th>Data Source</th><th>Grain</th></tr></thead>
+                <tbody>
+                    <tr><td>Coverage &amp; Quadrants</td><td>companies_raw_enriched</td><td>Company</td></tr>
+                    <tr><td>Marketing Engagements</td><td>engagements_fact_v2</td><td>Company &times; Day</td></tr>
+                    <tr><td>Sales Engagements</td><td>engagements_fact_v2</td><td>Company &times; Day</td></tr>
+                    <tr><td>Account Drill-down</td><td>engagements_by_contact_v1</td><td>Contact &times; Event</td></tr>
+                </tbody>
+            </table>
+
+            <p>Cross-page navigation uses company_name as the filter parameter passed via Looker Studio's page navigation with filter binding. No blends needed.</p>
+        </div>
+    </div>
+
+    <!-- TAB 3: WIREFRAME -->
+    <div class="tab-content" id="tab-3">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">03</span>
+                <h2 class="layer-title">Wireframe</h2>
+            </div>
+            <p>Structural layout with component IDs (V1 through V28). Gray boxes represent chart areas. Orange borders flag Looker Studio platform constraints. No styling, no dummy data &mdash; this is the blueprint.</p>
+        </div>
+
+        <div class="preview-container">
+            <div class="preview-header">
+                <span class="preview-title">layer-03-wireframe.html</span>
+                <span class="preview-badge">Interactive</span>
+            </div>
+            <iframe class="preview-frame" style="height: 800px;" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Incognia Dashboard — Wireframe (Layer 3)&lt;/title&gt;
+&lt;style&gt;
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:&#x27;Inter&#x27;,system-ui,sans-serif;background:#F5F5F5;color:#333;font-size:11px;padding:20px}
+.page{background:#fff;border:2px solid #999;border-radius:8px;margin-bottom:32px;overflow:hidden;max-width:1280px;margin-left:auto;margin-right:auto}
+.page-header{background:#E8E8E8;padding:10px 16px;border-bottom:2px solid #999;display:flex;justify-content:space-between;align-items:center}
+.page-title{font-size:14px;font-weight:700;color:#333}
+.page-label{font-size:10px;color:#666;font-style:italic}
+.page-body{padding:16px}
+.row{display:flex;gap:10px;margin-bottom:10px}
+.box{border:2px dashed #BBB;border-radius:6px;padding:8px;background:#FAFAFA;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:60px}
+.box.warn{border-color:#E67E22;background:#FFF8F0}
+.box-id{position:absolute;top:4px;left:6px;font-size:9px;font-weight:700;color:#fff;background:#555;padding:1px 5px;border-radius:3px}
+.box-id.warn{background:#E67E22}
+.box-type{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px}
+.box-desc{font-size:10px;color:#555;text-align:center;max-width:220px}
+.box-constraint{font-size:8px;color:#E67E22;margin-top:4px;font-weight:600}
+.filter-bar{background:#F0F0F0;border:1px solid #DDD;border-radius:6px;padding:8px 12px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-item{background:#fff;border:1px solid #CCC;border-radius:4px;padding:3px 8px;font-size:9px;color:#666}
+.section-label{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;margin-top:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.flex1{flex:1}
+.flex2{flex:2}
+.h80{min-height:80px}
+.h120{min-height:120px}
+.h160{min-height:160px}
+.h200{min-height:200px}
+.disclaimer{text-align:center;padding:8px;font-size:9px;color:#999;border-top:1px solid #EEE;margin-top:10px}
+.nav{display:flex;gap:0}
+.nav-tab{padding:8px 16px;font-size:11px;font-weight:600;color:#999;border-bottom:2px solid transparent;cursor:default}
+.nav-tab.active{color:#333;border-bottom-color:#333}
+h2{font-size:12px;margin-bottom:12px;color:#444}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h2&gt;INCOGNIA — Account Prioritization Dashboard · Wireframe · Layer 3&lt;/h2&gt;
+&lt;p style=&quot;font-size:10px;color:#888;margin-bottom:20px&quot;&gt;Annotated layout for Looker Studio build. Gray boxes = components. IDs match Component Registry. ⚠️ = platform constraint.&lt;/p&gt;
+
+&lt;!-- PAGE 1 --&gt;
+&lt;div class=&quot;page&quot;&gt;
+&lt;div class=&quot;page-header&quot;&gt;&lt;span class=&quot;page-title&quot;&gt;Page 1: Coverage &amp; Quadrants&lt;/span&gt;&lt;span class=&quot;page-label&quot;&gt;companies_raw_enriched&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;nav&quot;&gt;&lt;span class=&quot;nav-tab active&quot;&gt;Coverage &amp; Quadrants&lt;/span&gt;&lt;span class=&quot;nav-tab&quot;&gt;Marketing Engagements&lt;/span&gt;&lt;span class=&quot;nav-tab&quot;&gt;Sales Engagements&lt;/span&gt;&lt;span class=&quot;nav-tab&quot; style=&quot;color:#CCC&quot;&gt;Account Drill-down&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;page-body&quot;&gt;
+&lt;div class=&quot;filter-bar&quot;&gt;&lt;span style=&quot;font-size:9px;font-weight:700;color:#555&quot;&gt;F1&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;LF Stage ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Company ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Acc. Tier ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Is Target ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;ICP Tier ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Region ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;B.U ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Segment ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Quadrant ▼&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;box flex2 h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V1&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;KPI Scorecard Strip (3 tiles)&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Total Universe | Engaged Accounts | Zero Engagement&lt;br&gt;Each: count + sub-metric + WoW movers&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V6&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Horizontal Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Score Trend Distribution&lt;br&gt;(▲▲ / ▲ / — / ▼ / ▼▼)&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V7&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Horizontal Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Engagement Status Distribution&lt;br&gt;(Heating Up / Active / Dormant / No Status)&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;grid4&quot; style=&quot;margin-bottom:10px&quot;&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V2a&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard + Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;HOT HANDOFF&lt;br&gt;Count | % | Bar&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V2b&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard + Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;WELL COVERED&lt;br&gt;Count | % | Bar&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V2c&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard + Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;NEEDS AIR COVER&lt;br&gt;Count | % | Bar&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V2d&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard + Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;DARK&lt;br&gt;Count | % | Bar&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;box warn flex1 h200&quot;&gt;&lt;span class=&quot;box-id warn&quot;&gt;V3&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scatter / Bubble&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Engagement Matrix&lt;br&gt;MKT (X) vs Sales (Y)&lt;br&gt;Threshold at 50/50&lt;/span&gt;&lt;span class=&quot;box-constraint&quot;&gt;⚠️ No native threshold lines. Text overlay + reference lines.&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h200&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Stacked Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Coverage Over Time&lt;br&gt;Accounts per quadrant/week&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h200&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V5&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Grouped Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Engagement Status × Quadrant&lt;br&gt;Active/Heating/Cooling/Dormant&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;box h200&quot; style=&quot;width:100%&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V8&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Data Table (sortable, heatmap)&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Account List: Company (→drillthrough) | Acc. Tier | Sales Score | MKT Score | Combined | Quadrant | Eng. Status | Score Trend | Owner&lt;/span&gt;&lt;span class=&quot;box-constraint&quot;&gt;⚠️ Drill-through via URL params to Page 4&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- PAGE 2 --&gt;
+&lt;div class=&quot;page&quot;&gt;
+&lt;div class=&quot;page-header&quot;&gt;&lt;span class=&quot;page-title&quot;&gt;Page 2: Marketing Engagements&lt;/span&gt;&lt;span class=&quot;page-label&quot;&gt;engagements_fact_v2&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;nav&quot;&gt;&lt;span class=&quot;nav-tab&quot;&gt;Coverage &amp; Quadrants&lt;/span&gt;&lt;span class=&quot;nav-tab active&quot;&gt;Marketing Engagements&lt;/span&gt;&lt;span class=&quot;nav-tab&quot;&gt;Sales Engagements&lt;/span&gt;&lt;span class=&quot;nav-tab&quot; style=&quot;color:#CCC&quot;&gt;Account Drill-down&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;page-body&quot;&gt;
+&lt;div class=&quot;filter-bar&quot;&gt;&lt;span style=&quot;font-size:9px;font-weight:700;color:#555&quot;&gt;F2&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Company ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Account Tier ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Quadrant ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;ICP Tier ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Region ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Segment ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Date Range ▼&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div style=&quot;display:flex;flex-direction:column;gap:10px;width:160px&quot;&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V9a&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;AVG MKT SCORE&lt;br&gt;+/- vs prior&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V9b&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;ACCOUNTS SCORE ↑&lt;br&gt;count + %&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V9c&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;ACCOUNTS SCORE ↓&lt;br&gt;count + %&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;box flex1 h200&quot; style=&quot;min-height:260px&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V10&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Area / Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Marketing Score Trend — Weekly&lt;br&gt;Target vs ICP vs Other&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;section-label&quot;&gt;Paid LinkedIn · Account Tier · Weekly&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V11&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Impressions&lt;br&gt;li_impressions&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V12&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Video Views&lt;br&gt;li_videoviews&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;section-label&quot;&gt;Organic LinkedIn · Website · Marketing Events&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V13&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Organic LinkedIn&lt;br&gt;ld_activity_count&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V14&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Bar / Line&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Website Visits&lt;br&gt;website_visits_count&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V15&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Bar Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Mktg Events&lt;br&gt;mktg_events_count&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;box h160&quot; style=&quot;width:100%&quot;&gt;&lt;span class=&quot;box-id warn&quot;&gt;V16&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Data Table (heatmap)&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Account-Level Marketing: Company | Tier | Quad | MKT Sc. | Δ | Trend | Impr. | Video | LP | Co.Pg | Org. | Web | Evts&lt;/span&gt;&lt;span class=&quot;box-constraint&quot;&gt;⚠️ No sparklines — text trend&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- PAGE 3 --&gt;
+&lt;div class=&quot;page&quot;&gt;
+&lt;div class=&quot;page-header&quot;&gt;&lt;span class=&quot;page-title&quot;&gt;Page 3: Sales Engagements&lt;/span&gt;&lt;span class=&quot;page-label&quot;&gt;engagements_fact_v2&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;nav&quot;&gt;&lt;span class=&quot;nav-tab&quot;&gt;Coverage &amp; Quadrants&lt;/span&gt;&lt;span class=&quot;nav-tab&quot;&gt;Marketing Engagements&lt;/span&gt;&lt;span class=&quot;nav-tab active&quot;&gt;Sales Engagements&lt;/span&gt;&lt;span class=&quot;nav-tab&quot; style=&quot;color:#CCC&quot;&gt;Account Drill-down&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;page-body&quot;&gt;
+&lt;div class=&quot;filter-bar&quot;&gt;&lt;span style=&quot;font-size:9px;font-weight:700;color:#555&quot;&gt;F3&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Company ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Account Tier ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Quadrant ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;ICP Tier ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Region ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Segment ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Date Range ▼&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div style=&quot;display:flex;flex-direction:column;gap:10px;width:160px&quot;&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V17a&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;AVG SALES SCORE&lt;br&gt;+/- vs prior&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V17b&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;ACCOUNTS SCORE ↑&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V17c&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;ACCOUNTS SCORE ↓&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;box flex1 h200&quot; style=&quot;min-height:260px&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V18&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Area / Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Sales Score Trend — Weekly&lt;br&gt;Target vs ICP vs Other&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;section-label&quot;&gt;Sales Channels · Account Tier · Weekly&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V19&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Sales Emails&lt;br&gt;hs_eng_email&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V20&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Calls&lt;br&gt;hs_eng_calls&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V21&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Meetings&lt;br&gt;hs_eng_meetings&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V22&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Line Chart&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;LinkedIn DMs&lt;br&gt;hs_eng_linkedin_dm&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box flex1 h160&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V23&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Grouped Bar&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;HeyReach Activity&lt;br&gt;Sent | Accepted | Msg | Reply&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;box h160&quot; style=&quot;width:100%&quot;&gt;&lt;span class=&quot;box-id warn&quot;&gt;V24&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Data Table (heatmap)&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;Account-Level Sales: Company | Tier | Quad | Sales Sc. | Δ | Trend | Emails | Calls | Meetings | DMs | HeyReach&lt;/span&gt;&lt;span class=&quot;box-constraint&quot;&gt;⚠️ No sparklines — text trend&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- PAGE 4 --&gt;
+&lt;div class=&quot;page&quot;&gt;
+&lt;div class=&quot;page-header&quot;&gt;&lt;span class=&quot;page-title&quot;&gt;Page 4: Account Drill-down&lt;/span&gt;&lt;span class=&quot;page-label&quot;&gt;engagements_by_contact_v1&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;nav&quot;&gt;&lt;span class=&quot;nav-tab&quot; style=&quot;color:#3B82F6;font-size:10px&quot;&gt;← Account Coverage&lt;/span&gt;&lt;span class=&quot;nav-tab&quot; style=&quot;font-weight:400;color:#666&quot;&gt;›&lt;/span&gt;&lt;span class=&quot;nav-tab active&quot;&gt;DoorDash&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;page-body&quot;&gt;
+&lt;div class=&quot;filter-bar&quot;&gt;&lt;span style=&quot;font-size:9px;font-weight:700;color:#555&quot;&gt;F4&lt;/span&gt;&lt;span class=&quot;filter-item&quot; style=&quot;background:#E0FFF6;border-color:#00D4AA;font-weight:600&quot;&gt;Company: DoorDash&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Date Range ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Seniority ▼&lt;/span&gt;&lt;span class=&quot;filter-item&quot;&gt;Buying Role ▼&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot; style=&quot;width:100%;margin-bottom:10px;align-items:flex-start;padding:12px 16px&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V25&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Account Header Card&lt;/span&gt;&lt;span class=&quot;box-desc&quot; style=&quot;text-align:left;max-width:none&quot;&gt;&lt;strong&gt;Company Name&lt;/strong&gt; · [Quadrant] [Tier] [Region] [BU] [Industry]&lt;br&gt;Owner: Name · Lifecycle: Stage · Engagement status: Status&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;grid4&quot; style=&quot;margin-bottom:10px&quot;&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V26a&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;COMBINED SCORE&lt;br&gt;+/- vs prior&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V26b&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;MARKETING SCORE&lt;br&gt;Above/Below 50&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V26c&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;SALES SCORE&lt;br&gt;Above/Below 50&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box h80&quot;&gt;&lt;span class=&quot;box-id&quot;&gt;V26d&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Scorecard&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;CONTACTS&lt;br&gt;DM + Champions + New&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;box warn h200&quot; style=&quot;width:100%;margin-bottom:10px&quot;&gt;&lt;span class=&quot;box-id warn&quot;&gt;V27&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Data Table — Contact Roster&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;CONTACT | Title | Function | Seniority [pill] | Buying Role [pill] | Created | LI Paid | LI Organic | Website | Emails | Calls | Meetings&lt;/span&gt;&lt;span class=&quot;box-constraint&quot;&gt;⚠️ Pill colors via CASE heatmap · NEW badge · HYPERLINK to HubSpot&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box warn h200&quot; style=&quot;width:100%&quot;&gt;&lt;span class=&quot;box-id warn&quot;&gt;V28&lt;/span&gt;&lt;span class=&quot;box-type&quot;&gt;Data Table — Engagement Timeline&lt;/span&gt;&lt;span class=&quot;box-desc&quot;&gt;DATE | CONTACT | MOTION [Mkt/Sales/System] | CHANNEL | DETAIL&lt;br&gt;Sorted date desc · Filter by contact &amp; channel&lt;/span&gt;&lt;span class=&quot;box-constraint&quot;&gt;⚠️ Table approach — no native timeline viz in Looker Studio&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;disclaimer&quot;&gt;Looker: sort by any column · filter on seniority &amp; buying role · drill-through on contact name to HubSpot&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;text-align:center;padding:16px;font-size:10px;color:#AAA&quot;&gt;
+Wireframe · Layer 3 · Incognia Account Prioritization Dashboard · Structural blueprint&lt;br&gt;
+Component IDs match layer-03-mockup.md
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+        </div>
+    </div>
+
+    <!-- TAB 4: MOCKUP -->
+    <div class="tab-content" id="tab-4">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">04</span>
+                <h2 class="layer-title">Mockup Preview</h2>
+            </div>
+            <p>Styled with Incognia's brand theme (navy header, teal accent, Montserrat font). Seeded with illustrative dummy data across all 4 dashboard pages with tab navigation. Use the tabs inside the preview to switch pages.</p>
+        </div>
+
+        <div class="preview-container">
+            <div class="preview-header">
+                <span class="preview-title">layer-03-mockup-preview.html</span>
+                <span class="preview-badge">Interactive</span>
+            </div>
+            <iframe class="preview-frame" style="height: 900px;" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Incognia — Account Prioritization Dashboard (Mockup Preview)&lt;/title&gt;
+&lt;style&gt;
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:&#x27;Inter&#x27;,-apple-system,system-ui,sans-serif;background:#F7F8FA;color:#2E3038;font-size:12px}
+:root{
+--navy:#1A1A2E;--navy-l:#2D2D44;--teal:#00D4AA;--teal-d:#00A88A;--teal-l:#E0FFF6;--teal-m:#B3F0E0;
+--w:#FFF;--off:#F7F8FA;--g100:#F0F1F4;--g200:#E2E4E9;--g400:#9DA2AE;--g600:#6B7080;--g800:#2E3038;
+--hot:#F59E0B;--hotBg:#FEF3C7;--hotT:#92400E;--well:#10B981;--wellBg:#D1FAE5;--wellT:#065F46;
+--air:#3B82F6;--airBg:#DBEAFE;--airT:#1E3A8A;--dk:#6B7280;--dkBg:#F3F4F6;--dkT:#374151;
+--red:#EF4444;--heat:#8B5CF6;
+}
+.header{background:var(--navy);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+.header .logo{display:flex;align-items:center;gap:10px}
+.header .dot{width:26px;height:26px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center}
+.header .dot-inner{width:7px;height:7px;border-radius:50%;border:2px solid var(--navy)}
+.header .brand{color:#fff;font-size:14px;font-weight:600;letter-spacing:0.06em}
+.header .sub{color:var(--g400);font-size:12px;margin-left:8px}
+.disclaimer-bar{background:#FEF3C7;padding:6px 24px;font-size:10px;color:#92400E;text-align:center;font-weight:500}
+.tabs{display:flex;border-bottom:1px solid var(--g200);background:var(--w);padding:0 24px}
+.tab{padding:10px 16px;font-size:12px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:600}
+.tab:hover{color:var(--navy)}
+.container{max-width:1280px;margin:0 auto;padding:16px 24px}
+.page{display:none}.page.active{display:block}
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--w);padding:10px 14px;border-radius:8px;border:1px solid var(--g200);margin-bottom:14px}
+.filter-select{font-size:11px;padding:4px 8px;border-radius:4px;border:1px solid var(--g200);background:var(--w);color:var(--g800);min-width:80px}
+.fl{font-size:9px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.04em;margin-right:2px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.card{background:var(--w);border-radius:8px;padding:12px 14px;border:1px solid var(--g200)}
+.card-accent{border-left:3px solid var(--teal)}
+.card-label{font-size:10px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.card-val{font-size:26px;font-weight:700;color:var(--navy)}
+.card-sub{font-size:11px;color:var(--g600);margin-top:2px}
+.card-wow{font-size:10px;color:var(--g400);margin-top:5px;border-top:1px solid var(--g100);padding-top:4px}
+.card-wow .green{color:var(--well);font-weight:600}
+.q-card{border-left-width:3px;border-left-style:solid}
+.q-header{display:flex;justify-content:space-between;align-items:center}
+.q-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.q-val{font-size:18px;font-weight:700;color:var(--navy)}
+.q-bar{height:3px;background:var(--g100);border-radius:2px;margin-top:6px;overflow:hidden}
+.q-bar-fill{height:100%;border-radius:2px}
+.q-pct{font-size:10px;color:var(--g400);margin-top:3px}
+.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.chart-card{background:var(--w);border-radius:8px;padding:12px;border:1px solid var(--g200)}
+.chart-title{font-size:11px;font-weight:600;color:var(--navy);margin-bottom:1px}
+.chart-sub{font-size:9px;color:var(--g400);margin-bottom:8px}
+.legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.legend-item{display:flex;align-items:center;gap:3px;font-size:8px;color:var(--g400)}
+.legend-dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+.table-wrap{background:var(--w);border-radius:8px;border:1px solid var(--g200);overflow:hidden;margin-bottom:10px}
+.table-header{padding:8px 14px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center}
+.table-header .title{font-size:12px;font-weight:600;color:var(--navy)}
+.table-header .count{font-size:10px;color:var(--g400)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--off);border-bottom:1px solid var(--g200)}
+th{padding:7px 6px;text-align:left;font-size:9px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:6px;border-bottom:1px solid var(--g100);font-size:11px}
+tr:hover td{background:var(--off)}
+.pill{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap}
+.pill-hot{background:var(--hotBg);color:var(--hotT);border:1px solid #F59E0B30}
+.pill-well{background:var(--wellBg);color:var(--wellT);border:1px solid #10B98130}
+.pill-air{background:var(--airBg);color:var(--airT);border:1px solid #3B82F630}
+.pill-dark{background:var(--dkBg);color:var(--dkT);border:1px solid #6B728030}
+.pill-mkt{background:#EDE9FE;color:#5B21B6;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-sales{background:#FEE2E2;color:#991B1B;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-sys{background:var(--g100);color:var(--g600);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-target{background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-icp{background:var(--g100);color:var(--g600);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-new{background:#DBEAFE;color:#1E40AF;font-size:8px;padding:0 4px;border-radius:2px;font-weight:700;margin-left:4px}
+.score-high{font-weight:600;color:var(--well)}
+.score-low{font-weight:600;color:var(--g600)}
+.score-combined{font-weight:600;color:var(--navy)}
+.name-col{font-weight:500;color:var(--navy)}
+.owner-col{font-size:10px;color:var(--g600)}
+.sidebar-row{display:flex;gap:10px;margin-bottom:10px}
+.sidebar{display:flex;flex-direction:column;gap:10px;width:180px;flex-shrink:0}
+.main-chart{flex:1}
+.section-head{font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.section-sub{font-size:9px;color:var(--g400);margin-bottom:10px}
+.chart-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.chart-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.acct-header{background:var(--w);border:1px solid var(--g200);border-radius:8px;padding:16px;margin-bottom:10px}
+.acct-name{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.acct-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.acct-info{font-size:11px;color:var(--g600);display:flex;gap:16px}
+.breadcrumb{font-size:11px;color:var(--air);margin-bottom:10px}
+.breadcrumb span{color:var(--g400)}
+.footer{padding:8px 14px;font-size:10px;color:var(--g400);text-align:center}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;header&quot;&gt;
+&lt;div class=&quot;logo&quot;&gt;
+&lt;div class=&quot;dot&quot;&gt;&lt;div class=&quot;dot-inner&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;span class=&quot;brand&quot;&gt;INCOGNIA&lt;/span&gt;
+&lt;span class=&quot;sub&quot; id=&quot;pageSubtitle&quot;&gt;Account prioritization &amp; coverage&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;disclaimer-bar&quot;&gt;⚠️ Preview — final Looker Studio output may differ in layout, fonts, and interactive behavior. Dummy data is illustrative.&lt;/div&gt;
+&lt;div class=&quot;tabs&quot; id=&quot;tabsNav&quot;&gt;
+&lt;div class=&quot;tab active&quot; onclick=&quot;showPage(0)&quot;&gt;Coverage &amp; Quadrants&lt;/div&gt;
+&lt;div class=&quot;tab&quot; onclick=&quot;showPage(1)&quot;&gt;Marketing Engagements&lt;/div&gt;
+&lt;div class=&quot;tab&quot; onclick=&quot;showPage(2)&quot;&gt;Sales Engagements&lt;/div&gt;
+&lt;div class=&quot;tab&quot; onclick=&quot;showPage(3)&quot;&gt;Account Drill-down&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ========== PAGE 1: Coverage &amp; Quadrants ========== --&gt;
+&lt;div class=&quot;page active&quot; id=&quot;page0&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+&lt;div class=&quot;filters&quot;&gt;
+&lt;span class=&quot;fl&quot;&gt;LF Stage&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Company&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Acc. Tier&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Is Target&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;ICP Tier&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Region&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;B.U&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Segment&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;/div&gt;
+&lt;div class=&quot;grid3&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Total universe&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;478&lt;/div&gt;&lt;div class=&quot;card-sub&quot;&gt;312 target · 166 ICP&lt;/div&gt;&lt;div class=&quot;card-wow&quot;&gt;&lt;b&gt;38&lt;/b&gt; moved WoW · &lt;span class=&quot;green&quot;&gt;14 improved&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card card-accent&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Engaged accounts&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;314&lt;/div&gt;&lt;div class=&quot;card-sub&quot;&gt;65.7% coverage rate&lt;/div&gt;&lt;div class=&quot;card-wow&quot;&gt;&lt;b&gt;38&lt;/b&gt; moved WoW · &lt;span class=&quot;green&quot;&gt;14 improved&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Zero engagement&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;164&lt;/div&gt;&lt;div class=&quot;card-sub&quot;&gt;Dark — no marketing or sales signal&lt;/div&gt;&lt;div class=&quot;card-wow&quot;&gt;&lt;b&gt;38&lt;/b&gt; moved WoW · &lt;span class=&quot;green&quot;&gt;14 improved&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;grid4&quot;&gt;
+&lt;div class=&quot;card q-card&quot; style=&quot;border-left-color:var(--hot)&quot;&gt;&lt;div class=&quot;q-header&quot;&gt;&lt;span class=&quot;q-label&quot; style=&quot;color:var(--hotT)&quot;&gt;Hot handoff&lt;/span&gt;&lt;span class=&quot;q-val&quot;&gt;52&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;q-bar&quot;&gt;&lt;div class=&quot;q-bar-fill&quot; style=&quot;width:11%;background:var(--hot)&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;q-pct&quot;&gt;10.9% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card q-card&quot; style=&quot;border-left-color:var(--well)&quot;&gt;&lt;div class=&quot;q-header&quot;&gt;&lt;span class=&quot;q-label&quot; style=&quot;color:var(--wellT)&quot;&gt;Well covered&lt;/span&gt;&lt;span class=&quot;q-val&quot;&gt;52&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;q-bar&quot;&gt;&lt;div class=&quot;q-bar-fill&quot; style=&quot;width:11%;background:var(--well)&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;q-pct&quot;&gt;10.9% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card q-card&quot; style=&quot;border-left-color:var(--air)&quot;&gt;&lt;div class=&quot;q-header&quot;&gt;&lt;span class=&quot;q-label&quot; style=&quot;color:var(--airT)&quot;&gt;Needs air cover&lt;/span&gt;&lt;span class=&quot;q-val&quot;&gt;210&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;q-bar&quot;&gt;&lt;div class=&quot;q-bar-fill&quot; style=&quot;width:44%;background:var(--air)&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;q-pct&quot;&gt;43.9% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card q-card&quot; style=&quot;border-left-color:var(--dk)&quot;&gt;&lt;div class=&quot;q-header&quot;&gt;&lt;span class=&quot;q-label&quot; style=&quot;color:var(--dkT)&quot;&gt;Dark&lt;/span&gt;&lt;span class=&quot;q-val&quot;&gt;164&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;q-bar&quot;&gt;&lt;div class=&quot;q-bar-fill&quot; style=&quot;width:34%;background:var(--dk)&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;q-pct&quot;&gt;34.3% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;charts-row&quot;&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Engagement matrix&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;Marketing score (x) vs sales score (y) · Threshold at 50&lt;/div&gt;&lt;svg viewBox=&quot;0 0 260 230&quot; width=&quot;100%&quot; id=&quot;heatmap&quot;&gt;&lt;/svg&gt;&lt;div class=&quot;legend&quot;&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--teal-l);opacity:.7&quot;&gt;&lt;/span&gt;1–2&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--teal-m);opacity:.7&quot;&gt;&lt;/span&gt;3–5&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--teal);opacity:.7&quot;&gt;&lt;/span&gt;6–9&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--teal-d);opacity:.7&quot;&gt;&lt;/span&gt;10+&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Coverage over time&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;Accounts per quadrant · Last 7 weeks&lt;/div&gt;&lt;svg viewBox=&quot;0 0 260 190&quot; width=&quot;100%&quot; id=&quot;histchart&quot;&gt;&lt;/svg&gt;&lt;div class=&quot;legend&quot; style=&quot;justify-content:center&quot;&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--well);opacity:.75&quot;&gt;&lt;/span&gt;Well covered&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--hot);opacity:.75&quot;&gt;&lt;/span&gt;Hot handoff&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--air);opacity:.75&quot;&gt;&lt;/span&gt;Air cover&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--dk);opacity:.75&quot;&gt;&lt;/span&gt;Dark&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Engagement status by quadrant&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;Active / Cooling / Dormant / Heating up&lt;/div&gt;&lt;svg viewBox=&quot;0 0 260 190&quot; width=&quot;100%&quot; id=&quot;statuschart&quot;&gt;&lt;/svg&gt;&lt;div class=&quot;legend&quot; style=&quot;justify-content:center&quot;&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--well);opacity:.7&quot;&gt;&lt;/span&gt;Active&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:#8B5CF6;opacity:.7&quot;&gt;&lt;/span&gt;Heating up&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--hot);opacity:.7&quot;&gt;&lt;/span&gt;Cooling&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--red);opacity:.7&quot;&gt;&lt;/span&gt;Dormant&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;table-wrap&quot;&gt;
+&lt;div class=&quot;table-header&quot;&gt;&lt;span class=&quot;title&quot;&gt;Account list&lt;/span&gt;&lt;span class=&quot;count&quot;&gt;478 accounts&lt;/span&gt;&lt;/div&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Company&lt;/th&gt;&lt;th&gt;Mkt score&lt;/th&gt;&lt;th&gt;Sales score&lt;/th&gt;&lt;th&gt;Combined&lt;/th&gt;&lt;th&gt;Tier&lt;/th&gt;&lt;th&gt;Quadrant&lt;/th&gt;&lt;th&gt;Eng. status&lt;/th&gt;&lt;th&gt;Score trend&lt;/th&gt;&lt;th&gt;Owner&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;tablebody&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ========== PAGE 2: Marketing Engagements ========== --&gt;
+&lt;div class=&quot;page&quot; id=&quot;page1&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+&lt;div class=&quot;filters&quot;&gt;
+&lt;span class=&quot;fl&quot;&gt;Company&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Account Tier&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Quadrant&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;ICP Tier&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Region&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Segment&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Date Range&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;Last 8 weeks&lt;/option&gt;&lt;/select&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sidebar-row&quot;&gt;
+&lt;div class=&quot;sidebar&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Avg. MKT score&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;47&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--well)&quot;&gt;+3.1 vs prior&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Accounts score ↑&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;119&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--well)&quot;&gt;25% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Accounts score ↓&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;143&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--red)&quot;&gt;30% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;chart-card main-chart&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Marketing score trend — weekly&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;Avg. across accounts · Target vs ICP vs Other&lt;/div&gt;&lt;svg viewBox=&quot;0 0 500 200&quot; width=&quot;100%&quot; id=&quot;mktTrend&quot;&gt;&lt;/svg&gt;&lt;div class=&quot;legend&quot; style=&quot;justify-content:center&quot;&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--teal)&quot;&gt;&lt;/span&gt;Target&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--air)&quot;&gt;&lt;/span&gt;ICP&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--g400)&quot;&gt;&lt;/span&gt;Other&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;section-head&quot;&gt;&lt;span style=&quot;background:#0077B5;color:#fff;font-size:9px;padding:2px 5px;border-radius:3px&quot;&gt;in&lt;/span&gt; Paid LinkedIn&lt;span style=&quot;font-weight:400;font-size:9px;color:var(--g400)&quot;&gt;Breakdown = Account Tier · Weekly&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-grid2&quot;&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Impressions&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;li_impressions&lt;/div&gt;&lt;svg viewBox=&quot;0 0 300 120&quot; width=&quot;100%&quot; id=&quot;liImpr&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Video views&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;li_videoviews&lt;/div&gt;&lt;svg viewBox=&quot;0 0 300 120&quot; width=&quot;100%&quot; id=&quot;liVideo&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;section-head&quot;&gt;&lt;span style=&quot;background:var(--well);color:#fff;font-size:9px;padding:2px 5px;border-radius:3px&quot;&gt;+&lt;/span&gt; Organic LinkedIn · Website · Marketing events&lt;/div&gt;
+&lt;div class=&quot;chart-grid3&quot;&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Organic LinkedIn&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;ld_activity_count&lt;/div&gt;&lt;svg viewBox=&quot;0 0 220 120&quot; width=&quot;100%&quot; id=&quot;orgLi&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Website visits&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;website_visits_count · excl. Incognia&lt;/div&gt;&lt;svg viewBox=&quot;0 0 220 120&quot; width=&quot;100%&quot; id=&quot;webVisit&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Marketing events&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;mktg_events_count&lt;/div&gt;&lt;svg viewBox=&quot;0 0 220 120&quot; width=&quot;100%&quot; id=&quot;mktEvt&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ========== PAGE 3: Sales Engagements ========== --&gt;
+&lt;div class=&quot;page&quot; id=&quot;page2&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+&lt;div class=&quot;filters&quot;&gt;
+&lt;span class=&quot;fl&quot;&gt;Company&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Account Tier&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Quadrant&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;ICP Tier&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Region&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Segment&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Date Range&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;Last 8 weeks&lt;/option&gt;&lt;/select&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sidebar-row&quot;&gt;
+&lt;div class=&quot;sidebar&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Avg. Sales score&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;38&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--red)&quot;&gt;-1.2 vs prior&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Accounts score ↑&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;87&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--well)&quot;&gt;18% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Accounts score ↓&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;156&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--red)&quot;&gt;33% of universe&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;chart-card main-chart&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Sales score trend — weekly&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;Avg. across accounts · Target vs ICP vs Other&lt;/div&gt;&lt;svg viewBox=&quot;0 0 500 200&quot; width=&quot;100%&quot; id=&quot;salesTrend&quot;&gt;&lt;/svg&gt;&lt;div class=&quot;legend&quot; style=&quot;justify-content:center&quot;&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--teal)&quot;&gt;&lt;/span&gt;Target&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--air)&quot;&gt;&lt;/span&gt;ICP&lt;/span&gt;&lt;span class=&quot;legend-item&quot;&gt;&lt;span class=&quot;legend-dot&quot; style=&quot;background:var(--g400)&quot;&gt;&lt;/span&gt;Other&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;section-head&quot;&gt;Sales Channels&lt;span style=&quot;font-weight:400;font-size:9px;color:var(--g400)&quot;&gt;Breakdown = Account Tier · Weekly&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-grid3&quot;&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Sales emails&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;hs_eng_email&lt;/div&gt;&lt;svg viewBox=&quot;0 0 220 120&quot; width=&quot;100%&quot; id=&quot;sEmails&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Calls&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;hs_eng_calls&lt;/div&gt;&lt;svg viewBox=&quot;0 0 220 120&quot; width=&quot;100%&quot; id=&quot;sCalls&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;chart-card&quot;&gt;&lt;div class=&quot;chart-title&quot;&gt;Meetings&lt;/div&gt;&lt;div class=&quot;chart-sub&quot;&gt;hs_eng_meetings&lt;/div&gt;&lt;svg viewBox=&quot;0 0 220 120&quot; width=&quot;100%&quot; id=&quot;sMeetings&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ========== PAGE 4: Account Drill-down ========== --&gt;
+&lt;div class=&quot;page&quot; id=&quot;page3&quot;&gt;
+&lt;div class=&quot;container&quot;&gt;
+&lt;div class=&quot;breadcrumb&quot;&gt;&lt;a href=&quot;#&quot; onclick=&quot;showPage(0);return false&quot; style=&quot;color:var(--air);text-decoration:none&quot;&gt;Account Coverage&lt;/a&gt; &lt;span&gt;›&lt;/span&gt; &lt;strong style=&quot;color:var(--navy)&quot;&gt;DoorDash&lt;/strong&gt;&lt;/div&gt;
+&lt;div class=&quot;filters&quot;&gt;
+&lt;span class=&quot;fl&quot;&gt;Company&lt;/span&gt;&lt;select class=&quot;filter-select&quot; style=&quot;background:var(--teal-l);border-color:var(--teal);font-weight:600&quot;&gt;&lt;option&gt;DoorDash&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Date Range&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;Last 30 days&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Seniority&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;span class=&quot;fl&quot;&gt;Buying Role&lt;/span&gt;&lt;select class=&quot;filter-select&quot;&gt;&lt;option&gt;All&lt;/option&gt;&lt;/select&gt;
+&lt;/div&gt;
+&lt;div class=&quot;acct-header&quot;&gt;
+&lt;div class=&quot;acct-name&quot;&gt;DoorDash&lt;/div&gt;
+&lt;div class=&quot;acct-meta&quot;&gt;
+&lt;span class=&quot;pill pill-hot&quot;&gt;🔥 Hot handoff&lt;/span&gt;
+&lt;span class=&quot;pill-target&quot;&gt;Target&lt;/span&gt;
+&lt;span class=&quot;pill-icp&quot;&gt;Enterprise&lt;/span&gt;
+&lt;span class=&quot;pill-icp&quot;&gt;NA&lt;/span&gt;
+&lt;span class=&quot;pill-icp&quot;&gt;Delivery &amp; Logistics&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class=&quot;acct-info&quot;&gt;&lt;span&gt;Owner: &lt;strong&gt;Kathleen Corrigan&lt;/strong&gt;&lt;/span&gt;&lt;span&gt;Lifecycle: &lt;strong&gt;Warmed&lt;/strong&gt;&lt;/span&gt;&lt;span&gt;Engagement status: &lt;span style=&quot;color:var(--well);font-weight:600&quot;&gt;Active&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;grid4&quot;&gt;
+&lt;div class=&quot;card card-accent&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Combined account score&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;94&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--well)&quot;&gt;▲ 28 pts vs. prior period&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Marketing score&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;82&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--well)&quot;&gt;Above threshold (50)&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Sales score&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;card-sub&quot; style=&quot;color:var(--red)&quot;&gt;Below threshold (50)&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-label&quot;&gt;Contacts&lt;/div&gt;&lt;div class=&quot;card-val&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;card-sub&quot;&gt;2 decision makers · 2 champions · 1 new joiner&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;table-wrap&quot;&gt;
+&lt;div class=&quot;table-header&quot;&gt;&lt;span class=&quot;title&quot;&gt;Contact roster&lt;/span&gt;&lt;span class=&quot;count&quot;&gt;5 contacts&lt;/span&gt;&lt;/div&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Contact&lt;/th&gt;&lt;th&gt;Title&lt;/th&gt;&lt;th&gt;Function&lt;/th&gt;&lt;th&gt;Seniority&lt;/th&gt;&lt;th&gt;Buying role&lt;/th&gt;&lt;th&gt;Created&lt;/th&gt;&lt;th&gt;LI paid clicks&lt;/th&gt;&lt;th&gt;LI organic&lt;/th&gt;&lt;th&gt;Website visits&lt;/th&gt;&lt;th&gt;Sales emails&lt;/th&gt;&lt;th&gt;Calls&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td class=&quot;name-col&quot;&gt;Maria Chen&lt;br&gt;&lt;span style=&quot;font-size:9px;color:var(--g400)&quot;&gt;m.chen@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;VP of Product&lt;/td&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-target&quot;&gt;VP&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-hot&quot; style=&quot;font-size:9px&quot;&gt;Decision Maker&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2024-06-15&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600&quot;&gt;3&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600&quot;&gt;2&lt;/td&gt;&lt;td style=&quot;color:var(--air);font-weight:600&quot;&gt;1&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;name-col&quot;&gt;James Park&lt;br&gt;&lt;span style=&quot;font-size:9px;color:var(--g400)&quot;&gt;j.park@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;Dir. Trust &amp; Safety&lt;/td&gt;&lt;td&gt;Engineering&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-target&quot;&gt;Director&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot; style=&quot;font-size:9px&quot;&gt;Champion&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2025-01-10&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600&quot;&gt;1&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td style=&quot;color:var(--air);font-weight:600&quot;&gt;2&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;name-col&quot;&gt;Aisha Johnson&lt;br&gt;&lt;span style=&quot;font-size:9px;color:var(--g400)&quot;&gt;a.johnson@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;Sr. Product Manager&lt;/td&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-icp&quot;&gt;Manager&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-icp&quot; style=&quot;font-size:9px&quot;&gt;End User&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2025-11-20&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;name-col&quot;&gt;Raj Patel &lt;span class=&quot;pill-new&quot;&gt;NEW&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:var(--g400)&quot;&gt;r.patel@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;Head of Fraud Ops&lt;/td&gt;&lt;td&gt;Operations&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-target&quot;&gt;Director&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot; style=&quot;font-size:9px&quot;&gt;Champion&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2026-03-01&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600&quot;&gt;2&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;name-col&quot;&gt;Sophie Williams&lt;br&gt;&lt;span style=&quot;font-size:9px;color:var(--g400)&quot;&gt;s.williams@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;CTO&lt;/td&gt;&lt;td&gt;Engineering&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-target&quot;&gt;C-Level&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-hot&quot; style=&quot;font-size:9px&quot;&gt;Decision Maker&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2024-03-10&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&quot;table-wrap&quot;&gt;
+&lt;div class=&quot;table-header&quot;&gt;&lt;span class=&quot;title&quot;&gt;Engagement timeline&lt;/span&gt;&lt;div style=&quot;display:flex;gap:8px&quot;&gt;&lt;select class=&quot;filter-select&quot; style=&quot;font-size:10px&quot;&gt;&lt;option&gt;All contacts&lt;/option&gt;&lt;/select&gt;&lt;select class=&quot;filter-select&quot; style=&quot;font-size:10px&quot;&gt;&lt;option&gt;All channels&lt;/option&gt;&lt;/select&gt;&lt;span class=&quot;count&quot;&gt;11 events&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Contact&lt;/th&gt;&lt;th&gt;Motion&lt;/th&gt;&lt;th&gt;Channel&lt;/th&gt;&lt;th&gt;Detail&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-21&lt;/td&gt;&lt;td&gt;Maria Chen&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Organic&lt;/td&gt;&lt;td&gt;Liked post: &#x27;Why device-first identity matters for delivery apps&#x27;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-19&lt;/td&gt;&lt;td&gt;James Park&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;Website Visit&lt;/td&gt;&lt;td&gt;Visited /solutions/account-takeover — 3 pages, 4m 12s&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-18&lt;/td&gt;&lt;td&gt;Maria Chen&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Paid Click&lt;/td&gt;&lt;td&gt;Clicked landing page: Fraud Prevention eBook&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-17&lt;/td&gt;&lt;td&gt;James Park&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-sales&quot;&gt;Sales&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--hot)&quot;&gt;HeyReach&lt;/td&gt;&lt;td&gt;Accepted LinkedIn connection request&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-15&lt;/td&gt;&lt;td&gt;Aisha Johnson&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Paid Imp.&lt;/td&gt;&lt;td&gt;Saw ad: &#x27;Stop account takeover at login&#x27;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-14&lt;/td&gt;&lt;td&gt;Aisha Johnson&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;Mktg Email Open&lt;/td&gt;&lt;td&gt;Opened: March newsletter — Location intelligence trends&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-10&lt;/td&gt;&lt;td&gt;Raj Patel&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Paid Click&lt;/td&gt;&lt;td&gt;Clicked company page from sponsored post&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-01&lt;/td&gt;&lt;td&gt;Raj Patel&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-sys&quot;&gt;System&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--g600)&quot;&gt;Contact Created&lt;/td&gt;&lt;td&gt;New contact — recently joined DoorDash&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-02-28&lt;/td&gt;&lt;td&gt;Raj Patel&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Paid Click&lt;/td&gt;&lt;td&gt;Clicked landing page: Device Intelligence Whitepaper&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-02-20&lt;/td&gt;&lt;td&gt;Maria Chen&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Organic&lt;/td&gt;&lt;td&gt;Commented on post: &#x27;Great insights on fraud prevention!&#x27;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-02-15&lt;/td&gt;&lt;td&gt;James Park&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Paid Imp.&lt;/td&gt;&lt;td&gt;Saw ad: &#x27;Incognia for delivery platforms&#x27;&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;footer&quot;&gt;Mockup Preview · Layer 3 · Incognia Account Prioritization Dashboard · Illustrative data only&lt;/div&gt;
+
+&lt;script&gt;
+function showPage(n){
+document.querySelectorAll(&#x27;.page&#x27;).forEach((p,i)=&gt;{p.classList.toggle(&#x27;active&#x27;,i===n)});
+document.querySelectorAll(&#x27;.tab&#x27;).forEach((t,i)=&gt;{t.classList.toggle(&#x27;active&#x27;,i===n)});
+const subs=[&#x27;Account prioritization &amp; coverage&#x27;,&#x27;Marketing / Sales engagement trends&#x27;,&#x27;Marketing / Sales engagement trends&#x27;,&#x27;Account drill-down&#x27;];
+document.getElementById(&#x27;pageSubtitle&#x27;).textContent=subs[n];
+}
+
+// Seeded random
+function seededRng(s){return()=&gt;{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+const rng=seededRng(42),r=(a,b)=&gt;Math.floor(rng()*(b-a+1))+a;
+
+// Page 1 charts
+const names=[&quot;DoorDash&quot;,&quot;Swiggy&quot;,&quot;Blinkit&quot;,&quot;Mercari US&quot;,&quot;Naranja X&quot;,&quot;TradeStation&quot;,&quot;Kotak Mahindra&quot;,&quot;HDFC Bank&quot;,&quot;Meesho&quot;,&quot;Zepz&quot;,&quot;Wolt&quot;,&quot;Just Eat&quot;,&quot;Getir&quot;,&quot;Rappi&quot;,&quot;iFood&quot;,&quot;Nubank&quot;,&quot;PicPay&quot;,&quot;Flipkart&quot;,&quot;GoTo Group&quot;,&quot;Bradesco&quot;,&quot;Itaú&quot;,&quot;Walmart&quot;,&quot;McDonald&#x27;s&quot;,&quot;Airbnb&quot;,&quot;Delivery Hero&quot;,&quot;Grab&quot;,&quot;Shopee&quot;,&quot;Razorpay&quot;,&quot;PhonePe&quot;,&quot;Paytm&quot;];
+const owners=[&quot;Kathleen C.&quot;,&quot;Gautam S.&quot;,&quot;Ana Lima&quot;,&quot;Carlos S.&quot;,&quot;Reshma P.&quot;];
+const statuses=[&quot;Active&quot;,&quot;Cooling&quot;,&quot;Dormant&quot;,&quot;Heating up&quot;];
+const statusColors={&quot;Active&quot;:&quot;#10B981&quot;,&quot;Cooling&quot;:&quot;#F59E0B&quot;,&quot;Dormant&quot;:&quot;#EF4444&quot;,&quot;Heating up&quot;:&quot;#8B5CF6&quot;};
+const quadInfo={hotHandoff:{cls:&quot;pill-hot&quot;,label:&quot;Hot handoff&quot;},wellCovered:{cls:&quot;pill-well&quot;,label:&quot;Well covered&quot;},needsAirCover:{cls:&quot;pill-air&quot;,label:&quot;Needs air cover&quot;},dark:{cls:&quot;pill-dark&quot;,label:&quot;Dark&quot;}};
+const quadColors={wellCovered:&quot;#10B981&quot;,hotHandoff:&quot;#F59E0B&quot;,needsAirCover:&quot;#3B82F6&quot;,dark:&quot;#6B7280&quot;};
+
+const accounts=names.map((n,i)=&gt;{
+const mkt=r(0,130),sales=r(0,110);
+const tier=i&lt;20?&quot;Target&quot;:&quot;ICP&quot;;
+const gq=(m,s)=&gt;m&gt;=50&amp;&amp;s&gt;=50?&quot;wellCovered&quot;:m&gt;=50&amp;&amp;s&lt;50?&quot;hotHandoff&quot;:m&lt;50&amp;&amp;s&gt;=50?&quot;needsAirCover&quot;:&quot;dark&quot;;
+const quad=gq(mkt,sales);
+let sw;if(quad===&quot;wellCovered&quot;)sw=[.6,.15,.05,.2];else if(quad===&quot;hotHandoff&quot;)sw=[.3,.1,.1,.5];else if(quad===&quot;needsAirCover&quot;)sw=[.25,.35,.15,.25];else sw=[.05,.25,.6,.1];
+let rv=rng(),cum=0,si=0;for(let j=0;j&lt;sw.length;j++){cum+=sw[j];if(rv&lt;cum){si=j;break}}
+return{name:n,tier,mkt,sales,combined:mkt+sales,quad,owner:owners[r(0,4)],engStatus:statuses[si]};
+});
+accounts.sort((a,b)=&gt;b.combined-a.combined);
+
+const tbody=document.getElementById(&quot;tablebody&quot;);
+accounts.forEach(a=&gt;{
+const qi=quadInfo[a.quad];
+const sc=a.mkt&gt;=50?&quot;score-high&quot;:&quot;score-low&quot;;
+const ss=a.sales&gt;=50?&quot;score-high&quot;:&quot;score-low&quot;;
+const stColor=statusColors[a.engStatus];
+const tierCls=a.tier===&quot;Target&quot;?&quot;pill-target&quot;:&quot;pill-icp&quot;;
+const trends=[&quot;▲▲ Strong increase&quot;,&quot;▲ Increasing&quot;,&quot;— Flat&quot;,&quot;▼ Decreasing&quot;,&quot;▼▼ Sharp decline&quot;];
+const trend=trends[r(0,4)];
+tbody.innerHTML+=`&lt;tr style=&quot;cursor:pointer&quot; onclick=&quot;showPage(3)&quot;&gt;
+&lt;td class=&quot;name-col&quot;&gt;${a.name}&lt;/td&gt;
+&lt;td&gt;&lt;span class=&quot;${sc}&quot;&gt;${a.mkt}&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class=&quot;${ss}&quot;&gt;${a.sales}&lt;/span&gt;&lt;/td&gt;
+&lt;td class=&quot;score-combined&quot;&gt;${a.combined}&lt;/td&gt;
+&lt;td&gt;&lt;span class=&quot;${tierCls}&quot;&gt;${a.tier}&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class=&quot;pill ${qi.cls}&quot;&gt;${qi.label}&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span style=&quot;color:${stColor};font-weight:600;font-size:10px&quot;&gt;${a.engStatus}&lt;/span&gt;&lt;/td&gt;
+&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;${trend}&lt;/td&gt;
+&lt;td class=&quot;owner-col&quot;&gt;${a.owner}&lt;/td&gt;
+&lt;/tr&gt;`;
+});
+
+// Heatmap
+const hm=document.getElementById(&quot;heatmap&quot;);
+const grid={};let maxH=1;
+accounts.forEach(a=&gt;{const mx=Math.min(Math.floor(a.mkt/10),12),sy=Math.min(Math.floor(a.sales/10),11);const k=mx+&quot;-&quot;+sy;grid[k]=(grid[k]||0)+1});
+Object.values(grid).forEach(v=&gt;{if(v&gt;maxH)maxH=v});
+let hmSvg=`&lt;line x1=&quot;30&quot; y1=&quot;5&quot; x2=&quot;30&quot; y2=&quot;195&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;&lt;line x1=&quot;30&quot; y1=&quot;195&quot; x2=&quot;255&quot; y2=&quot;195&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;&lt;line x1=&quot;${30+(50/130)*225}&quot; y1=&quot;5&quot; x2=&quot;${30+(50/130)*225}&quot; y2=&quot;195&quot; stroke=&quot;#1A1A2E&quot; stroke-width=&quot;0.5&quot; stroke-dasharray=&quot;3 2&quot; opacity=&quot;0.3&quot;/&gt;&lt;line x1=&quot;30&quot; y1=&quot;${195-(50/110)*190}&quot; x2=&quot;255&quot; y2=&quot;${195-(50/110)*190}&quot; stroke=&quot;#1A1A2E&quot; stroke-width=&quot;0.5&quot; stroke-dasharray=&quot;3 2&quot; opacity=&quot;0.3&quot;/&gt;&lt;text x=&quot;${30+(25/130)*225}&quot; y=&quot;${195-(75/110)*190}&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#1E3A8A&quot; opacity=&quot;0.4&quot;&gt;Air cover&lt;/text&gt;&lt;text x=&quot;${30+(90/130)*225}&quot; y=&quot;${195-(75/110)*190}&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#065F46&quot; opacity=&quot;0.4&quot;&gt;Well covered&lt;/text&gt;&lt;text x=&quot;${30+(25/130)*225}&quot; y=&quot;${195-(20/110)*190}&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#374151&quot; opacity=&quot;0.3&quot;&gt;Dark&lt;/text&gt;&lt;text x=&quot;${30+(90/130)*225}&quot; y=&quot;${195-(20/110)*190}&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#92400E&quot; opacity=&quot;0.4&quot;&gt;Hot handoff&lt;/text&gt;`;
+for(let mx=0;mx&lt;13;mx++){for(let sy=0;sy&lt;12;sy++){const k=mx+&quot;-&quot;+sy,count=grid[k]||0;if(!count)continue;const intensity=count/maxH;const x=30+mx*(225/13),y=195-(sy+1)*(190/12),w=225/13-1,h=190/12-1;const fill=intensity&gt;.7?&quot;#00A88A&quot;:intensity&gt;.3?&quot;#00D4AA&quot;:&quot;#B3F0E0&quot;;hmSvg+=`&lt;rect x=&quot;${x}&quot; y=&quot;${y}&quot; width=&quot;${w}&quot; height=&quot;${h}&quot; rx=&quot;2&quot; fill=&quot;${fill}&quot; opacity=&quot;${(.15+intensity*.75).toFixed(2)}&quot;/&gt;`}}
+hmSvg+=`&lt;text x=&quot;142&quot; y=&quot;220&quot; text-anchor=&quot;middle&quot; font-size=&quot;8&quot; fill=&quot;#9DA2AE&quot;&gt;Marketing score →&lt;/text&gt;&lt;text x=&quot;8&quot; y=&quot;100&quot; text-anchor=&quot;middle&quot; font-size=&quot;8&quot; fill=&quot;#9DA2AE&quot; transform=&quot;rotate(-90,8,100)&quot;&gt;Sales score →&lt;/text&gt;`;
+hm.innerHTML=hmSvg;
+
+// Historical stacked bar
+const hc=document.getElementById(&quot;histchart&quot;);
+const weeks=[&quot;W6&quot;,&quot;W7&quot;,&quot;W8&quot;,&quot;W9&quot;,&quot;W10&quot;,&quot;W11&quot;,&quot;W12&quot;];
+const rng2=seededRng(99),r2=(a,b)=&gt;Math.floor(rng2()*(b-a+1))+a;
+const hist=weeks.map((w,i)=&gt;({w,well:10+r2(-1,2)+Math.floor(i*.8),hot:8+r2(-1,3)+Math.floor(i*.5),air:6+r2(-1,2),dark:Math.max(20,40-i*2+r2(-2,2))}));
+hist.forEach(h=&gt;h.engaged=h.well+h.hot+h.air);
+const histMax=Math.max(...hist.map(h=&gt;h.engaged+h.dark));
+let hcSvg=&#x27;&#x27;;
+[.25,.5,.75,1].forEach(pct=&gt;{const y=160-pct*140;hcSvg+=`&lt;line x1=&quot;30&quot; y1=&quot;${y}&quot; x2=&quot;250&quot; y2=&quot;${y}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.3&quot;/&gt;&lt;text x=&quot;26&quot; y=&quot;${y+3}&quot; text-anchor=&quot;end&quot; font-size=&quot;7&quot; fill=&quot;#9DA2AE&quot;&gt;${Math.round(pct*histMax)}&lt;/text&gt;`});
+const qOrder=[&quot;wellCovered&quot;,&quot;hotHandoff&quot;,&quot;needsAirCover&quot;,&quot;dark&quot;];
+hist.forEach((h,i)=&gt;{const x=38+i*30,bw=18;let cy=160;const vals={wellCovered:h.well,hotHandoff:h.hot,needsAirCover:h.air,dark:h.dark};qOrder.forEach(q=&gt;{const bh=(vals[q]/histMax)*140;cy-=bh;hcSvg+=`&lt;rect x=&quot;${x}&quot; y=&quot;${cy}&quot; width=&quot;${bw}&quot; height=&quot;${bh}&quot; fill=&quot;${quadColors[q]}&quot; opacity=&quot;0.75&quot; rx=&quot;1&quot;/&gt;`});hcSvg+=`&lt;text x=&quot;${x+bw/2}&quot; y=&quot;172&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#9DA2AE&quot;&gt;${h.w}&lt;/text&gt;`});
+hc.innerHTML=hcSvg;
+
+// Status by quadrant
+const stc=document.getElementById(&quot;statuschart&quot;);
+const statusByQuad={};
+Object.keys(quadColors).forEach(q=&gt;{statusByQuad[q]={Active:0,Cooling:0,Dormant:0,&quot;Heating up&quot;:0};accounts.filter(a=&gt;a.quad===q).forEach(a=&gt;statusByQuad[q][a.engStatus]++)});
+const maxSt=Math.max(1,...Object.values(statusByQuad).flatMap(s=&gt;Object.values(s)));
+const stOrder=[&quot;Active&quot;,&quot;Heating up&quot;,&quot;Cooling&quot;,&quot;Dormant&quot;];
+const qLabels={wellCovered:&quot;Well&quot;,hotHandoff:&quot;Hot&quot;,needsAirCover:&quot;Air&quot;,dark:&quot;Dark&quot;};
+let stSvg=`&lt;line x1=&quot;30&quot; y1=&quot;155&quot; x2=&quot;250&quot; y2=&quot;155&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;`;
+Object.entries(quadColors).forEach(([qk,qc],qi)=&gt;{const sts=statusByQuad[qk];const gx=38+qi*56;stOrder.forEach((st,si)=&gt;{const val=sts[st],bh=(val/maxSt)*120,bx=gx+si*11;stSvg+=`&lt;rect x=&quot;${bx}&quot; y=&quot;${155-bh}&quot; width=&quot;9&quot; height=&quot;${bh}&quot; fill=&quot;${statusColors[st]}&quot; opacity=&quot;0.7&quot; rx=&quot;1&quot;/&gt;`;if(val&gt;0)stSvg+=`&lt;text x=&quot;${bx+4.5}&quot; y=&quot;${150-bh}&quot; text-anchor=&quot;middle&quot; font-size=&quot;6&quot; fill=&quot;#6B7080&quot;&gt;${val}&lt;/text&gt;`});stSvg+=`&lt;text x=&quot;${gx+20}&quot; y=&quot;168&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#9DA2AE&quot;&gt;${qLabels[qk]}&lt;/text&gt;`});
+stc.innerHTML=stSvg;
+
+// Page 2/3: Simple line charts
+function drawLines(svgId,vb,data,colors){
+const svg=document.getElementById(svgId);if(!svg)return;
+const w=parseInt(vb.split(&#x27; &#x27;)[2]),h=parseInt(vb.split(&#x27; &#x27;)[3]);
+const mx=40,my=15,cw=w-mx-10,ch=h-my-25;
+const maxV=Math.max(...data.flatMap(d=&gt;d.values));
+let s=`&lt;line x1=&quot;${mx}&quot; y1=&quot;${my}&quot; x2=&quot;${mx}&quot; y2=&quot;${my+ch}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;&lt;line x1=&quot;${mx}&quot; y1=&quot;${my+ch}&quot; x2=&quot;${mx+cw}&quot; y2=&quot;${my+ch}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;`;
+const weeks=[&quot;W5&quot;,&quot;W6&quot;,&quot;W7&quot;,&quot;W8&quot;,&quot;W9&quot;,&quot;W10&quot;,&quot;W11&quot;,&quot;W12&quot;];
+weeks.forEach((wk,i)=&gt;{s+=`&lt;text x=&quot;${mx+i*(cw/7)}&quot; y=&quot;${my+ch+12}&quot; text-anchor=&quot;middle&quot; font-size=&quot;7&quot; fill=&quot;#9DA2AE&quot;&gt;${wk}&lt;/text&gt;`});
+data.forEach((d,di)=&gt;{
+let pts=d.values.map((v,i)=&gt;`${mx+i*(cw/7)},${my+ch-(v/maxV)*ch}`).join(&#x27; &#x27;);
+s+=`&lt;polyline points=&quot;${pts}&quot; fill=&quot;none&quot; stroke=&quot;${colors[di]}&quot; stroke-width=&quot;1.5&quot; opacity=&quot;0.8&quot;/&gt;`;
+});
+svg.innerHTML=s;
+}
+const rng3=seededRng(77),r3=(a,b)=&gt;Math.floor(rng3()*(b-a+1))+a;
+drawLines(&#x27;mktTrend&#x27;,&#x27;0 0 500 200&#x27;,[{values:[32,34,30,35,37,40,42,47]},{values:[18,20,19,21,22,20,23,22]},{values:[8,9,10,9,11,10,12,11]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;liImpr&#x27;,&#x27;0 0 300 120&#x27;,[{values:[4200,3800,4500,4100,4800,5200,4900,5500]},{values:[1800,2000,1900,2200,2100,2400,2300,2600]},{values:[400,500,450,600,550,700,650,800]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;liVideo&#x27;,&#x27;0 0 300 120&#x27;,[{values:[1200,1000,1100,900,1300,1400,1100,1500]},{values:[400,500,350,450,500,600,550,700]},{values:[100,120,80,150,130,200,170,250]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;orgLi&#x27;,&#x27;0 0 220 120&#x27;,[{values:[5,8,10,12,15,18,22,35]},{values:[3,4,5,6,8,10,12,18]},{values:[1,1,2,2,3,3,4,5]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;webVisit&#x27;,&#x27;0 0 220 120&#x27;,[{values:[50,60,45,70,80,90,100,120]},{values:[30,35,40,45,50,55,60,70]},{values:[10,12,8,15,18,20,22,25]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;mktEvt&#x27;,&#x27;0 0 220 120&#x27;,[{values:[2,3,1,4,2,5,3,6]},{values:[1,1,0,2,1,2,1,3]},{values:[0,1,0,1,0,1,0,1]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;salesTrend&#x27;,&#x27;0 0 500 200&#x27;,[{values:[40,38,42,39,41,37,40,38]},{values:[25,27,24,26,28,25,27,26]},{values:[12,10,14,11,13,10,12,11]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;sEmails&#x27;,&#x27;0 0 220 120&#x27;,[{values:[80,90,70,85,95,75,88,92]},{values:[40,45,35,42,50,38,44,48]},{values:[15,18,12,20,16,22,19,24]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;sCalls&#x27;,&#x27;0 0 220 120&#x27;,[{values:[20,25,18,22,28,20,24,26]},{values:[10,12,8,11,14,9,13,15]},{values:[3,4,2,5,3,6,4,5]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+drawLines(&#x27;sMeetings&#x27;,&#x27;0 0 220 120&#x27;,[{values:[5,7,4,6,8,5,7,9]},{values:[2,3,1,3,4,2,3,4]},{values:[1,1,0,1,2,1,1,2]}],[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;]);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+        </div>
+    </div>
+
+    <!-- TAB 5: REQUIREMENTS -->
+    <div class="tab-content" id="tab-5">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">05</span>
+                <h2 class="layer-title">Requirements</h2>
+            </div>
+
+            <p>36 metrics, 24 dimensions, 20+ filters, and 7 interactivity rules &mdash; all traced back to the visual components and success criteria from Layer 1.</p>
+
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-value">36</div><div class="stat-label">Metrics</div></div>
+                <div class="stat-card"><div class="stat-value">24</div><div class="stat-label">Dimensions</div></div>
+                <div class="stat-card"><div class="stat-value">20+</div><div class="stat-label">Filters</div></div>
+                <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Interactions</div></div>
+            </div>
+
+            <h3>Key Metrics</h3>
+            <table class="spec-table">
+                <thead><tr><th>Metric</th><th>Aggregation</th><th>Used In</th></tr></thead>
+                <tbody>
+                    <tr><td>Total Account Count</td><td>COUNT DISTINCT</td><td>V1, V2</td></tr>
+                    <tr><td>Coverage Rate</td><td>Engaged / Total &times; 100</td><td>V1</td></tr>
+                    <tr><td>WoW Movers</td><td>Current vs. prior quadrant</td><td>V1, V2</td></tr>
+                    <tr><td>Marketing Score</td><td>SAFE_CAST &rarr; FLOAT</td><td>V3, V8, V10, V16, V26</td></tr>
+                    <tr><td>Sales Score</td><td>SAFE_CAST &rarr; FLOAT</td><td>V3, V8, V18, V24, V26</td></tr>
+                    <tr><td>LI Impressions</td><td>SUM</td><td>V11, V16</td></tr>
+                    <tr><td>Sales Email Count</td><td>SUM</td><td>V19, V24</td></tr>
+                    <tr><td>Contact Count</td><td>COUNT DISTINCT</td><td>V26, V27</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Interactivity</h3>
+            <table class="spec-table">
+                <thead><tr><th>Action</th><th>Description</th><th>Priority</th></tr></thead>
+                <tbody>
+                    <tr><td>Cross-filtering</td><td>Click quadrant card &rarr; filters scatter + table</td><td>Must</td></tr>
+                    <tr><td>Table drill-through</td><td>Click company &rarr; navigate to Account Drill-down</td><td>Must</td></tr>
+                    <tr><td>Tab navigation</td><td>Switch between Pages 1 through 3</td><td>Must</td></tr>
+                    <tr><td>Table sorting</td><td>Click column header to sort</td><td>Must</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Calculated Fields</h3>
+            <p>9 custom calculated fields documented with exact platform syntax: quadrant classification, score trend, motion type, channel labels, persona matching, and threshold indicators. All score fields require SAFE_CAST from STRING to FLOAT64.</p>
+        </div>
+    </div>
+
+    <!-- TAB 6: VISUAL SPEC -->
+    <div class="tab-content" id="tab-6">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">06</span>
+                <h2 class="layer-title">Visual Spec Sheet</h2>
+            </div>
+
+            <p>Pixel-level specifications for all 28 components. Each spec card documents chart type, data bindings, formatting rules, conditional logic, and Looker Studio workarounds.</p>
+
+            <h3>Components</h3>
+            <div class="component-list">
+                <div class="component-item"><span class="component-id">V1</span><div class="component-name">KPI Scorecard Strip</div><div class="component-type">3&times; Scorecards &mdash; Universe, Engaged, Zero</div></div>
+                <div class="component-item"><span class="component-id">V2</span><div class="component-name">Quadrant Summary Cards</div><div class="component-type">4&times; Cards with progress bars</div></div>
+                <div class="component-item"><span class="component-id">V3</span><div class="component-name">Engagement Matrix</div><div class="component-type">Scatter &mdash; MKT vs Sales score</div></div>
+                <div class="component-item"><span class="component-id">V4</span><div class="component-name">Coverage Over Time</div><div class="component-type">Stacked bar &mdash; quadrants per week</div></div>
+                <div class="component-item"><span class="component-id">V5</span><div class="component-name">Status by Quadrant</div><div class="component-type">Grouped bar &mdash; engagement status</div></div>
+                <div class="component-item"><span class="component-id">V8</span><div class="component-name">Account List Table</div><div class="component-type">Heatmap table + drill-through</div></div>
+                <div class="component-item"><span class="component-id">V10</span><div class="component-name">Marketing Score Trend</div><div class="component-type">Area chart &mdash; weekly avg by tier</div></div>
+                <div class="component-item"><span class="component-id">V11&ndash;V15</span><div class="component-name">Marketing Channels</div><div class="component-type">Line/bar &mdash; LI, organic, website, events</div></div>
+                <div class="component-item"><span class="component-id">V18</span><div class="component-name">Sales Score Trend</div><div class="component-type">Area chart &mdash; weekly avg by tier</div></div>
+                <div class="component-item"><span class="component-id">V19&ndash;V23</span><div class="component-name">Sales Channels</div><div class="component-type">Line/bar &mdash; emails, calls, DMs, HeyReach</div></div>
+                <div class="component-item"><span class="component-id">V25</span><div class="component-name">Account Header Card</div><div class="component-type">Company info + pills + owner</div></div>
+                <div class="component-item"><span class="component-id">V27</span><div class="component-name">Contact Roster</div><div class="component-type">Table &mdash; seniority, buying role, persona</div></div>
+                <div class="component-item"><span class="component-id">V28</span><div class="component-name">Engagement Timeline</div><div class="component-type">Table &mdash; date, contact, motion, detail</div></div>
+            </div>
+        </div>
+
+        <div class="preview-container">
+            <div class="preview-header">
+                <span class="preview-title">layer-05-visual-preview.html</span>
+                <span class="preview-badge">Interactive</span>
+            </div>
+            <iframe class="preview-frame" style="height: 900px;" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Incognia — Visual Spec Preview Catalog (Layer 5)&lt;/title&gt;
+&lt;style&gt;
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:&#x27;Inter&#x27;,-apple-system,system-ui,sans-serif;background:#F7F8FA;color:#2E3038;font-size:12px;padding:0}
+:root{--navy:#1A1A2E;--teal:#00D4AA;--teal-d:#00A88A;--teal-l:#E0FFF6;--teal-m:#B3F0E0;--w:#FFF;--off:#F7F8FA;--g100:#F0F1F4;--g200:#E2E4E9;--g400:#9DA2AE;--g600:#6B7080;--g800:#2E3038;--hot:#F59E0B;--hotBg:#FEF3C7;--hotT:#92400E;--well:#10B981;--wellBg:#D1FAE5;--wellT:#065F46;--air:#3B82F6;--airBg:#DBEAFE;--airT:#1E3A8A;--dk:#6B7280;--dkBg:#F3F4F6;--dkT:#374151;--red:#EF4444;--heat:#8B5CF6}
+.top-bar{background:var(--navy);padding:12px 24px;display:flex;align-items:center;gap:10px}
+.top-bar .dot{width:22px;height:22px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center}
+.top-bar .dot-i{width:6px;height:6px;border-radius:50%;border:2px solid var(--navy)}
+.top-bar span{color:#fff;font-size:13px;font-weight:600;letter-spacing:.05em}
+.top-bar .sub{color:var(--g400);font-size:11px;font-weight:400;margin-left:6px}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.intro{font-size:11px;color:var(--g600);margin-bottom:24px}
+.visual-section{background:var(--w);border:1px solid var(--g200);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.vs-header{background:var(--off);padding:12px 16px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center}
+.vs-id{background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-right:8px}
+.vs-title{font-size:13px;font-weight:600;color:var(--navy)}
+.vs-page{font-size:10px;color:var(--g400)}
+.vs-body{display:flex;gap:16px;padding:16px}
+.vs-chart{flex:1;min-width:0}
+.vs-spec{width:280px;flex-shrink:0;font-size:10px;color:var(--g600)}
+.vs-spec table{width:100%;border-collapse:collapse}
+.vs-spec td{padding:3px 4px;border-bottom:1px solid var(--g100);vertical-align:top}
+.vs-spec td:first-child{font-weight:600;color:var(--g800);width:90px;white-space:nowrap}
+.vs-spec .plat{font-size:9px;color:var(--hot);margin-top:6px}
+.pill{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap}
+.pill-hot{background:var(--hotBg);color:var(--hotT)}
+.pill-well{background:var(--wellBg);color:var(--wellT)}
+.pill-air{background:var(--airBg);color:var(--airT)}
+.pill-dark{background:var(--dkBg);color:var(--dkT)}
+.card-row{display:flex;gap:10px}
+.mini-card{flex:1;background:var(--off);border:1px solid var(--g200);border-radius:6px;padding:10px;text-align:center}
+.mini-card .label{font-size:9px;color:var(--g400);text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.mini-card .val{font-size:22px;font-weight:700;color:var(--navy)}
+.mini-card .sub{font-size:10px;color:var(--g600);margin-top:2px}
+.q-mini{border-left:3px solid}
+table.demo{width:100%;border-collapse:collapse;font-size:10px}
+table.demo th{padding:5px 4px;text-align:left;font-size:8px;font-weight:600;color:var(--g400);text-transform:uppercase;background:var(--off);border-bottom:1px solid var(--g200)}
+table.demo td{padding:4px;border-bottom:1px solid var(--g100)}
+.nm{font-weight:500;color:var(--navy)}
+.sh{color:var(--well);font-weight:600}
+.sl{color:var(--g600);font-weight:600}
+.pill-mkt{background:#EDE9FE;color:#5B21B6;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-sales{background:#FEE2E2;color:#991B1B;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+.pill-sys{background:var(--g100);color:var(--g600);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;top-bar&quot;&gt;
+&lt;div class=&quot;dot&quot;&gt;&lt;div class=&quot;dot-i&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;span&gt;INCOGNIA&lt;/span&gt;
+&lt;span class=&quot;sub&quot;&gt;Visual Spec Preview Catalog · Layer 5&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;container&quot;&gt;
+&lt;h1&gt;Visual Preview Catalog&lt;/h1&gt;
+&lt;p class=&quot;intro&quot;&gt;Each section renders one dashboard component with illustrative data alongside its key specifications. Scroll through all visuals. Brand theme applied. Charts use dummy data matching the spec card field definitions.&lt;/p&gt;
+
+&lt;!-- ===== V1: KPI Scorecard Strip ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V1&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;KPI Scorecard Strip&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 1: Coverage &amp; Quadrants&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot;&gt;
+&lt;div class=&quot;vs-chart&quot;&gt;
+&lt;div class=&quot;card-row&quot;&gt;
+&lt;div class=&quot;mini-card&quot;&gt;&lt;div class=&quot;label&quot;&gt;Total Universe&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;478&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;312 target · 166 ICP&lt;/div&gt;&lt;div style=&quot;font-size:9px;color:var(--g400);margin-top:4px;border-top:1px solid var(--g200);padding-top:3px&quot;&gt;&lt;b&gt;38&lt;/b&gt; moved WoW · &lt;span style=&quot;color:var(--well);font-weight:600&quot;&gt;14 improved&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mini-card&quot; style=&quot;border-left:3px solid var(--teal)&quot;&gt;&lt;div class=&quot;label&quot;&gt;Engaged Accounts&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;314&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;65.7% coverage rate&lt;/div&gt;&lt;div style=&quot;font-size:9px;color:var(--g400);margin-top:4px;border-top:1px solid var(--g200);padding-top:3px&quot;&gt;&lt;b&gt;38&lt;/b&gt; moved WoW · &lt;span style=&quot;color:var(--well);font-weight:600&quot;&gt;14 improved&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mini-card&quot;&gt;&lt;div class=&quot;label&quot;&gt;Zero Engagement&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;164&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;Dark — no signal&lt;/div&gt;&lt;div style=&quot;font-size:9px;color:var(--g400);margin-top:4px;border-top:1px solid var(--g200);padding-top:3px&quot;&gt;&lt;b&gt;38&lt;/b&gt; moved WoW · &lt;span style=&quot;color:var(--well);font-weight:600&quot;&gt;14 improved&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;vs-spec&quot;&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;Type&lt;/td&gt;&lt;td&gt;3× Scorecard&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Metrics&lt;/td&gt;&lt;td&gt;M1, M2, M3, M4, M7, M8&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Data source&lt;/td&gt;&lt;td&gt;companies_raw_enriched&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Filters&lt;/td&gt;&lt;td&gt;All F1 global&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Comparison&lt;/td&gt;&lt;td&gt;WoW via weekly_snapshot&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;div class=&quot;plat&quot;&gt;⚠️ WoW comparison needs prior_quadrant calc in BQ&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V2: Quadrant Summary Cards ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V2&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Quadrant Summary Cards&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 1&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot;&gt;
+&lt;div class=&quot;vs-chart&quot;&gt;
+&lt;div class=&quot;card-row&quot;&gt;
+&lt;div class=&quot;mini-card q-mini&quot; style=&quot;border-left-color:var(--hot)&quot;&gt;&lt;div class=&quot;label&quot; style=&quot;color:var(--hotT)&quot;&gt;Hot Handoff&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;52&lt;/div&gt;&lt;div style=&quot;height:3px;background:var(--g100);border-radius:2px;margin-top:4px&quot;&gt;&lt;div style=&quot;height:100%;width:11%;background:var(--hot);border-radius:2px&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;10.9%&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mini-card q-mini&quot; style=&quot;border-left-color:var(--well)&quot;&gt;&lt;div class=&quot;label&quot; style=&quot;color:var(--wellT)&quot;&gt;Well Covered&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;52&lt;/div&gt;&lt;div style=&quot;height:3px;background:var(--g100);border-radius:2px;margin-top:4px&quot;&gt;&lt;div style=&quot;height:100%;width:11%;background:var(--well);border-radius:2px&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;10.9%&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mini-card q-mini&quot; style=&quot;border-left-color:var(--air)&quot;&gt;&lt;div class=&quot;label&quot; style=&quot;color:var(--airT)&quot;&gt;Needs Air Cover&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;210&lt;/div&gt;&lt;div style=&quot;height:3px;background:var(--g100);border-radius:2px;margin-top:4px&quot;&gt;&lt;div style=&quot;height:100%;width:44%;background:var(--air);border-radius:2px&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;43.9%&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mini-card q-mini&quot; style=&quot;border-left-color:var(--dk)&quot;&gt;&lt;div class=&quot;label&quot; style=&quot;color:var(--dkT)&quot;&gt;Dark&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;164&lt;/div&gt;&lt;div style=&quot;height:3px;background:var(--g100);border-radius:2px;margin-top:4px&quot;&gt;&lt;div style=&quot;height:100%;width:34%;background:var(--dk);border-radius:2px&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;34.3%&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;vs-spec&quot;&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;Type&lt;/td&gt;&lt;td&gt;4× Scorecard + Bar&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Metrics&lt;/td&gt;&lt;td&gt;M5, M6&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Dimension&lt;/td&gt;&lt;td&gt;D2 (Quadrant)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Colors&lt;/td&gt;&lt;td&gt;Hot:#F59E0B Well:#10B981 Air:#3B82F6 Dark:#6B7280&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V3: Engagement Matrix ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V3&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Engagement Matrix (Scatter)&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 1&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot;&gt;
+&lt;div class=&quot;vs-chart&quot;&gt;&lt;svg viewBox=&quot;0 0 400 320&quot; width=&quot;100%&quot; id=&quot;v3scatter&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-spec&quot;&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;Type&lt;/td&gt;&lt;td&gt;Scatter / Bubble&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;X-Axis&lt;/td&gt;&lt;td&gt;M9 (MKT Score)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Y-Axis&lt;/td&gt;&lt;td&gt;M10 (Sales Score)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Dimension&lt;/td&gt;&lt;td&gt;D1 (Company)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Threshold&lt;/td&gt;&lt;td&gt;50/50 dashed lines&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Quadrant labels&lt;/td&gt;&lt;td&gt;Text overlay&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;div class=&quot;plat&quot;&gt;⚠️ No native threshold lines on LS scatter. Use text box overlay.&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V4: Coverage Over Time ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Coverage Over Time (Stacked Bar)&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 1&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot;&gt;
+&lt;div class=&quot;vs-chart&quot;&gt;&lt;svg viewBox=&quot;0 0 420 220&quot; width=&quot;100%&quot; id=&quot;v4stacked&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-spec&quot;&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;Type&lt;/td&gt;&lt;td&gt;Stacked Bar&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Metric&lt;/td&gt;&lt;td&gt;M5 (COUNT per quad)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Dimensions&lt;/td&gt;&lt;td&gt;D6 (Week), D2 (Quadrant)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Series&lt;/td&gt;&lt;td&gt;Well → Hot → Air → Dark&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Colors&lt;/td&gt;&lt;td&gt;Quadrant palette&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;div class=&quot;plat&quot;&gt;⚠️ Needs weekly snapshot pre-agg in BQ&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V8: Account List Table ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V8&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Account List Table&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 1&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot; style=&quot;flex-direction:column&quot;&gt;
+&lt;table class=&quot;demo&quot;&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Company&lt;/th&gt;&lt;th&gt;Tier&lt;/th&gt;&lt;th&gt;Sales Sc.&lt;/th&gt;&lt;th&gt;MKT Sc.&lt;/th&gt;&lt;th&gt;Combined&lt;/th&gt;&lt;th&gt;Quadrant&lt;/th&gt;&lt;th&gt;Eng. Status&lt;/th&gt;&lt;th&gt;Score Trend&lt;/th&gt;&lt;th&gt;Owner&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;DoorDash&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;Target&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;100&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;121&lt;/td&gt;&lt;td style=&quot;font-weight:700&quot;&gt;181&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot;&gt;Well covered&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600;font-size:10px&quot;&gt;Active&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;▼ Decreasing&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;Kathleen C.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Delivery Hero&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;Target&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;100&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;57&lt;/td&gt;&lt;td style=&quot;font-weight:700&quot;&gt;172&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot;&gt;Well covered&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600;font-size:10px&quot;&gt;Active&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--well)&quot;&gt;▲ Increasing&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;Gautam S.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Uber&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;Target&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;100&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;57&lt;/td&gt;&lt;td style=&quot;font-weight:700&quot;&gt;165&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot;&gt;Well covered&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600;font-size:10px&quot;&gt;Active&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--well)&quot;&gt;▲ Increasing&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;Ana Lima&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Booking.com&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;Target&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;100&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;15&lt;/td&gt;&lt;td style=&quot;font-weight:700&quot;&gt;149&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-air&quot;&gt;Needs air cover&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--well);font-weight:600;font-size:10px&quot;&gt;Active&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g400)&quot;&gt;— Flat&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;Carlos S.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Mercari US&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;Target&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;100&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;85&lt;/td&gt;&lt;td style=&quot;font-weight:700&quot;&gt;140&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot;&gt;Well covered&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--heat);font-weight:600;font-size:10px&quot;&gt;Heating Up&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--well)&quot;&gt;▲▲ Strong increase&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:var(--g600)&quot;&gt;Reshma P.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div style=&quot;padding:6px;font-size:9px;color:var(--g400);text-align:center&quot;&gt;Heatmap on score columns · Company name clickable → drill-through to Page 4 · Sortable&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V10: Marketing Score Trend ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V10&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Marketing Score Trend — Weekly&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 2: Marketing Engagements&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot;&gt;
+&lt;div class=&quot;vs-chart&quot;&gt;&lt;svg viewBox=&quot;0 0 500 200&quot; width=&quot;100%&quot; id=&quot;v10line&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-spec&quot;&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;Type&lt;/td&gt;&lt;td&gt;Area / Line Chart&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Metric&lt;/td&gt;&lt;td&gt;M13 (AVG mkt score)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Dimension&lt;/td&gt;&lt;td&gt;D6 (Week)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Breakdown&lt;/td&gt;&lt;td&gt;D5 (Tier): Target, ICP, Other&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Colors&lt;/td&gt;&lt;td&gt;#00D4AA / #3B82F6 / #9DA2AE&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V27: Contact Roster ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V27&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Contact Roster Table&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 4: Account Drill-down&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot; style=&quot;flex-direction:column&quot;&gt;
+&lt;table class=&quot;demo&quot;&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Contact&lt;/th&gt;&lt;th&gt;Title&lt;/th&gt;&lt;th&gt;Function&lt;/th&gt;&lt;th&gt;Seniority&lt;/th&gt;&lt;th&gt;Buying Role&lt;/th&gt;&lt;th&gt;Created&lt;/th&gt;&lt;th&gt;LI Paid&lt;/th&gt;&lt;th&gt;LI Org.&lt;/th&gt;&lt;th&gt;Web&lt;/th&gt;&lt;th&gt;Emails&lt;/th&gt;&lt;th&gt;Calls&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Maria Chen&lt;br&gt;&lt;span style=&quot;font-size:8px;color:var(--g400)&quot;&gt;m.chen@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;VP of Product&lt;/td&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;VP&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-hot&quot; style=&quot;font-size:9px&quot;&gt;Decision Maker&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2024-06-15&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;3&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;2&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;1&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Raj Patel &lt;span style=&quot;background:var(--airBg);color:var(--airT);font-size:8px;padding:0 4px;border-radius:2px;font-weight:700&quot;&gt;NEW&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:var(--g400)&quot;&gt;r.patel@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;Head of Fraud Ops&lt;/td&gt;&lt;td&gt;Operations&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;Director&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-well&quot; style=&quot;font-size:9px&quot;&gt;Champion&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2026-03-01&lt;/td&gt;&lt;td class=&quot;sh&quot;&gt;2&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;nm&quot;&gt;Sophie Williams&lt;br&gt;&lt;span style=&quot;font-size:8px;color:var(--g400)&quot;&gt;s.williams@doordash.com&lt;/span&gt;&lt;/td&gt;&lt;td&gt;CTO&lt;/td&gt;&lt;td&gt;Engineering&lt;/td&gt;&lt;td&gt;&lt;span style=&quot;background:var(--teal-l);color:var(--teal-d);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600&quot;&gt;C-Level&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill pill-hot&quot; style=&quot;font-size:9px&quot;&gt;Decision Maker&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2024-03-10&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;td class=&quot;sl&quot;&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div style=&quot;padding:6px;font-size:9px;color:var(--g400);text-align:center&quot;&gt;Sorted by seniority rank · NEW badge for contacts created &amp;lt; 30 days · Contact name links to HubSpot&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ===== V28: Engagement Timeline ===== --&gt;
+&lt;div class=&quot;visual-section&quot;&gt;
+&lt;div class=&quot;vs-header&quot;&gt;&lt;div&gt;&lt;span class=&quot;vs-id&quot;&gt;V28&lt;/span&gt;&lt;span class=&quot;vs-title&quot;&gt;Engagement Timeline Table&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;vs-page&quot;&gt;Page 4: Account Drill-down&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;vs-body&quot; style=&quot;flex-direction:column&quot;&gt;
+&lt;table class=&quot;demo&quot;&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Contact&lt;/th&gt;&lt;th&gt;Motion&lt;/th&gt;&lt;th&gt;Channel&lt;/th&gt;&lt;th&gt;Detail&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-21&lt;/td&gt;&lt;td&gt;Maria Chen&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Organic&lt;/td&gt;&lt;td&gt;Liked post: &#x27;Why device-first identity matters for delivery apps&#x27;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-19&lt;/td&gt;&lt;td&gt;James Park&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;Website Visit&lt;/td&gt;&lt;td&gt;Visited /solutions/account-takeover — 3 pages, 4m 12s&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-17&lt;/td&gt;&lt;td&gt;James Park&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-sales&quot;&gt;Sales&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--hot)&quot;&gt;HeyReach&lt;/td&gt;&lt;td&gt;Accepted LinkedIn connection request&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-10&lt;/td&gt;&lt;td&gt;Raj Patel&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-mkt&quot;&gt;Marketing&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--air)&quot;&gt;LinkedIn Paid Click&lt;/td&gt;&lt;td&gt;Clicked company page from sponsored post&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2026-03-01&lt;/td&gt;&lt;td&gt;Raj Patel&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill-sys&quot;&gt;System&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;color:var(--g600)&quot;&gt;Contact Created&lt;/td&gt;&lt;td&gt;New contact — recently joined DoorDash&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div style=&quot;padding:6px;font-size:9px;color:var(--g400);text-align:center&quot;&gt;Sorted by date desc · Filter by contact &amp; channel · Motion pill via CASE heatmap&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;script&gt;
+function seededRng(s){return()=&gt;{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+
+// V3: Scatter plot
+(function(){
+const svg=document.getElementById(&#x27;v3scatter&#x27;);
+const rng=seededRng(42),r=(a,b)=&gt;Math.floor(rng()*(b-a+1))+a;
+const mx=50,my=20,cw=320,ch=260;
+let s=`&lt;rect x=&quot;${mx}&quot; y=&quot;${my}&quot; width=&quot;${cw}&quot; height=&quot;${ch}&quot; fill=&quot;none&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;`;
+// Threshold lines
+const tx=mx+(50/130)*cw, ty=my+ch-(50/110)*ch;
+s+=`&lt;line x1=&quot;${tx}&quot; y1=&quot;${my}&quot; x2=&quot;${tx}&quot; y2=&quot;${my+ch}&quot; stroke=&quot;#1A1A2E&quot; stroke-width=&quot;0.8&quot; stroke-dasharray=&quot;4 3&quot; opacity=&quot;0.25&quot;/&gt;`;
+s+=`&lt;line x1=&quot;${mx}&quot; y1=&quot;${ty}&quot; x2=&quot;${mx+cw}&quot; y2=&quot;${ty}&quot; stroke=&quot;#1A1A2E&quot; stroke-width=&quot;0.8&quot; stroke-dasharray=&quot;4 3&quot; opacity=&quot;0.25&quot;/&gt;`;
+// Labels
+s+=`&lt;text x=&quot;${mx+cw*.25}&quot; y=&quot;${my+15}&quot; text-anchor=&quot;middle&quot; font-size=&quot;9&quot; fill=&quot;#374151&quot; opacity=&quot;0.3&quot;&gt;Dark&lt;/text&gt;`;
+s+=`&lt;text x=&quot;${mx+cw*.75}&quot; y=&quot;${my+15}&quot; text-anchor=&quot;middle&quot; font-size=&quot;9&quot; fill=&quot;#92400E&quot; opacity=&quot;0.4&quot;&gt;Hot handoff&lt;/text&gt;`;
+s+=`&lt;text x=&quot;${mx+cw*.25}&quot; y=&quot;${my+ch-10}&quot; text-anchor=&quot;middle&quot; font-size=&quot;9&quot; fill=&quot;#1E3A8A&quot; opacity=&quot;0.3&quot;&gt;Air cover&lt;/text&gt;`;
+s+=`&lt;text x=&quot;${mx+cw*.75}&quot; y=&quot;${my+ch-10}&quot; text-anchor=&quot;middle&quot; font-size=&quot;9&quot; fill=&quot;#065F46&quot; opacity=&quot;0.4&quot;&gt;Well covered&lt;/text&gt;`;
+// Dots
+for(let i=0;i&lt;80;i++){
+const mkt=r(0,130),sales=r(0,110);
+const x=mx+(mkt/130)*cw, y=my+ch-(sales/110)*ch;
+const col=mkt&gt;=50&amp;&amp;sales&gt;=50?&#x27;#10B981&#x27;:mkt&gt;=50?&#x27;#F59E0B&#x27;:sales&gt;=50?&#x27;#3B82F6&#x27;:&#x27;#9DA2AE&#x27;;
+s+=`&lt;circle cx=&quot;${x}&quot; cy=&quot;${y}&quot; r=&quot;3.5&quot; fill=&quot;${col}&quot; opacity=&quot;0.6&quot;/&gt;`;
+}
+s+=`&lt;text x=&quot;${mx+cw/2}&quot; y=&quot;${my+ch+18}&quot; text-anchor=&quot;middle&quot; font-size=&quot;9&quot; fill=&quot;#9DA2AE&quot;&gt;Marketing score →&lt;/text&gt;`;
+s+=`&lt;text x=&quot;${mx-30}&quot; y=&quot;${my+ch/2}&quot; text-anchor=&quot;middle&quot; font-size=&quot;9&quot; fill=&quot;#9DA2AE&quot; transform=&quot;rotate(-90,${mx-30},${my+ch/2})&quot;&gt;Sales score →&lt;/text&gt;`;
+// Axis ticks
+s+=`&lt;text x=&quot;${tx}&quot; y=&quot;${my+ch+12}&quot; text-anchor=&quot;middle&quot; font-size=&quot;8&quot; fill=&quot;#9DA2AE&quot;&gt;50&lt;/text&gt;`;
+s+=`&lt;text x=&quot;${mx-5}&quot; y=&quot;${ty+3}&quot; text-anchor=&quot;end&quot; font-size=&quot;8&quot; fill=&quot;#9DA2AE&quot;&gt;50&lt;/text&gt;`;
+svg.innerHTML=s;
+})();
+
+// V4: Stacked bar
+(function(){
+const svg=document.getElementById(&#x27;v4stacked&#x27;);
+const rng=seededRng(99),r=(a,b)=&gt;Math.floor(rng()*(b-a+1))+a;
+const mx=50,my=15,cw=340,ch=170;
+const weeks=[&quot;W6&quot;,&quot;W7&quot;,&quot;W8&quot;,&quot;W9&quot;,&quot;W10&quot;,&quot;W11&quot;,&quot;W12&quot;];
+const colors=[&#x27;#10B981&#x27;,&#x27;#F59E0B&#x27;,&#x27;#3B82F6&#x27;,&#x27;#6B7280&#x27;];
+const data=weeks.map((_,i)=&gt;[12+r(-1,3)+Math.floor(i*.6),10+r(-1,2)+Math.floor(i*.4),8+r(-1,2),Math.max(15,35-i*2+r(-2,2))]);
+const maxV=Math.max(...data.map(d=&gt;d.reduce((a,b)=&gt;a+b,0)));
+let s=`&lt;line x1=&quot;${mx}&quot; y1=&quot;${my+ch}&quot; x2=&quot;${mx+cw}&quot; y2=&quot;${my+ch}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;`;
+[.25,.5,.75,1].forEach(p=&gt;{const y=my+ch-p*ch;s+=`&lt;line x1=&quot;${mx}&quot; y1=&quot;${y}&quot; x2=&quot;${mx+cw}&quot; y2=&quot;${y}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.3&quot;/&gt;&lt;text x=&quot;${mx-5}&quot; y=&quot;${y+3}&quot; text-anchor=&quot;end&quot; font-size=&quot;7&quot; fill=&quot;#9DA2AE&quot;&gt;${Math.round(p*maxV)}&lt;/text&gt;`});
+const bw=cw/weeks.length*.6, gap=cw/weeks.length;
+data.forEach((d,i)=&gt;{
+const x=mx+i*gap+(gap-bw)/2;
+let cy=my+ch;
+d.forEach((v,j)=&gt;{const bh=(v/maxV)*ch;cy-=bh;s+=`&lt;rect x=&quot;${x}&quot; y=&quot;${cy}&quot; width=&quot;${bw}&quot; height=&quot;${bh}&quot; fill=&quot;${colors[j]}&quot; opacity=&quot;0.75&quot; rx=&quot;1&quot;/&gt;`});
+s+=`&lt;text x=&quot;${x+bw/2}&quot; y=&quot;${my+ch+12}&quot; text-anchor=&quot;middle&quot; font-size=&quot;8&quot; fill=&quot;#9DA2AE&quot;&gt;${weeks[i]}&lt;/text&gt;`;
+});
+svg.innerHTML=s;
+})();
+
+// V10: Line chart
+(function(){
+const svg=document.getElementById(&#x27;v10line&#x27;);
+const mx=45,my=15,cw=430,ch=155;
+const weeks=[&quot;W5&quot;,&quot;W6&quot;,&quot;W7&quot;,&quot;W8&quot;,&quot;W9&quot;,&quot;W10&quot;,&quot;W11&quot;,&quot;W12&quot;];
+const series=[[32,34,30,35,37,40,42,47],[18,20,19,21,22,20,23,22],[8,9,10,9,11,10,12,11]];
+const colors=[&#x27;#00D4AA&#x27;,&#x27;#3B82F6&#x27;,&#x27;#9DA2AE&#x27;];
+const maxV=50;
+let s=`&lt;line x1=&quot;${mx}&quot; y1=&quot;${my+ch}&quot; x2=&quot;${mx+cw}&quot; y2=&quot;${my+ch}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.5&quot;/&gt;`;
+[.25,.5,.75,1].forEach(p=&gt;{const y=my+ch-p*ch;s+=`&lt;line x1=&quot;${mx}&quot; y1=&quot;${y}&quot; x2=&quot;${mx+cw}&quot; y2=&quot;${y}&quot; stroke=&quot;#E2E4E9&quot; stroke-width=&quot;0.3&quot;/&gt;&lt;text x=&quot;${mx-5}&quot; y=&quot;${y+3}&quot; text-anchor=&quot;end&quot; font-size=&quot;7&quot; fill=&quot;#9DA2AE&quot;&gt;${Math.round(p*maxV)}&lt;/text&gt;`});
+weeks.forEach((w,i)=&gt;{s+=`&lt;text x=&quot;${mx+i*(cw/7)}&quot; y=&quot;${my+ch+12}&quot; text-anchor=&quot;middle&quot; font-size=&quot;8&quot; fill=&quot;#9DA2AE&quot;&gt;${w}&lt;/text&gt;`});
+series.forEach((vals,si)=&gt;{
+// Area fill
+let area=`M${mx},${my+ch}`;
+vals.forEach((v,i)=&gt;{area+=`L${mx+i*(cw/7)},${my+ch-(v/maxV)*ch}`});
+area+=`L${mx+(vals.length-1)*(cw/7)},${my+ch}Z`;
+s+=`&lt;path d=&quot;${area}&quot; fill=&quot;${colors[si]}&quot; opacity=&quot;0.08&quot;/&gt;`;
+// Line
+let pts=vals.map((v,i)=&gt;`${mx+i*(cw/7)},${my+ch-(v/maxV)*ch}`).join(&#x27; &#x27;);
+s+=`&lt;polyline points=&quot;${pts}&quot; fill=&quot;none&quot; stroke=&quot;${colors[si]}&quot; stroke-width=&quot;2&quot; opacity=&quot;0.85&quot;/&gt;`;
+});
+svg.innerHTML=s;
+})();
+&lt;/script&gt;
+
+&lt;div style=&quot;text-align:center;padding:20px;font-size:10px;color:var(--g400)&quot;&gt;
+Visual Preview Catalog · Layer 5 · Incognia Account Prioritization Dashboard&lt;br&gt;
+Illustrative data only · Brand theme applied · Components match layer-05-visual-spec.md
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+        </div>
+    </div>
+
+    <!-- TAB 7: BRAND -->
+    <div class="tab-content" id="tab-7">
+        <div class="layer-body">
+            <div class="layer-intro">
+                <span class="layer-number">07</span>
+                <h2 class="layer-title">Brand Application</h2>
+            </div>
+
+            <p>The dashboard uses a derived palette adapted from Incognia's brand guide. Navy replaces purple for better data readability; teal retains the green family's approachable quality. Typography is Montserrat throughout.</p>
+
+            <h3>Core Palette</h3>
+            <div class="swatch-row">
+                <div class="swatch"><div class="swatch-dot" style="background: #1A1A2E;"></div><div><div class="swatch-label">Navy (Primary)</div><div class="swatch-hex">#1A1A2E</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #00D4AA;"></div><div><div class="swatch-label">Teal (Accent)</div><div class="swatch-hex">#00D4AA</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #F7F8FA;"></div><div><div class="swatch-label">Off-white (BG)</div><div class="swatch-hex">#F7F8FA</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #6B7080;"></div><div><div class="swatch-label">Gray 600 (Body)</div><div class="swatch-hex">#6B7080</div></div></div>
+            </div>
+
+            <h3>Quadrant Colors</h3>
+            <div class="swatch-row">
+                <div class="swatch"><div class="swatch-dot" style="background: #F59E0B;"></div><div><div class="swatch-label">Hot Handoff</div><div class="swatch-hex">#F59E0B</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #10B981;"></div><div><div class="swatch-label">Well Covered</div><div class="swatch-hex">#10B981</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #3B82F6;"></div><div><div class="swatch-label">Needs Air Cover</div><div class="swatch-hex">#3B82F6</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #6B7280;"></div><div><div class="swatch-label">Dark</div><div class="swatch-hex">#6B7280</div></div></div>
+            </div>
+
+            <h3>Status Colors</h3>
+            <div class="swatch-row">
+                <div class="swatch"><div class="swatch-dot" style="background: #10B981;"></div><div><div class="swatch-label">Active</div><div class="swatch-hex">#10B981</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #8B5CF6;"></div><div><div class="swatch-label">Heating Up</div><div class="swatch-hex">#8B5CF6</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #F59E0B;"></div><div><div class="swatch-label">Cooling</div><div class="swatch-hex">#F59E0B</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #EF4444;"></div><div><div class="swatch-label">Dormant</div><div class="swatch-hex">#EF4444</div></div></div>
+            </div>
+
+            <h3>Chart Series</h3>
+            <div class="swatch-row">
+                <div class="swatch"><div class="swatch-dot" style="background: #00D4AA;"></div><div><div class="swatch-label">Target</div><div class="swatch-hex">#00D4AA</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #3B82F6;"></div><div><div class="swatch-label">ICP</div><div class="swatch-hex">#3B82F6</div></div></div>
+                <div class="swatch"><div class="swatch-dot" style="background: #9DA2AE;"></div><div><div class="swatch-label">Other</div><div class="swatch-hex">#9DA2AE</div></div></div>
+            </div>
+
+            <h3>Accessibility</h3>
+            <p>All critical text elements pass WCAG AA. Navy on white: 16.75:1 ratio. The dashboard never relies on color alone &mdash; every quadrant, status, and trend includes a text label alongside the color indicator. Quadrant pill contrast ranges from 7.1:1 to 8.5:1.</p>
+        </div>
+    </div>
+
+    <footer>
+        <span>&copy; 2026 Jonas Ferreira &middot; Lean Layer</span>
+        <div class="footer-links">
+            <a href="index.html">Portfolio</a>
+            <a href="https://github.com/jferreirall" target="_blank">GitHub</a>
+            <a href="mailto:jonasferreira@leanlayer.com">Email</a>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // Activate clicked tab and matching content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById('tab-' + tabId).classList.add('active');
+
+                // Scroll to tabs
+                document.querySelector('.tabs-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+
+</body>
+</html>
